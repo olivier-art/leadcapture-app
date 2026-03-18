@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LeadCapture">
+<meta name="theme-color" content="#f97316">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>LeadCapture Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08090d;--bg2:#0f1117;--bg3:#161820;--orange:#f97316;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--text:#f0f1f5;--muted:#9ca3af;--border:rgba(255,255,255,.08);--r:12px;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-height:100dvh;overflow-x:hidden;padding-top:var(--st);padding-bottom:var(--sb)}
+.screen{display:none;flex-direction:column;min-height:100dvh}.screen.active{display:flex}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(8,9,13,.95);backdrop-filter:blur(12px);padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.logo{font-size:15px;font-weight:700}.logo span{color:var(--orange)}
+.ta{background:none;border:none;color:var(--orange);font-size:14px;font-weight:600;cursor:pointer;margin-left:auto}
+.tb{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}
+.tt{font-size:15px;font-weight:600;flex:1;text-align:center;margin-right:28px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(8,9,13,.97);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:var(--sb);z-index:50}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;background:none;border:none;color:var(--muted);font-size:10px;font-weight:500;cursor:pointer;transition:color .15s}
+.ni.on{color:var(--orange)}.nii{font-size:20px;line-height:1}
+.cnt{flex:1;overflow-y:auto;padding:16px 16px 90px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;border-radius:10px;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:opacity .15s,transform .1s;width:100%}
+.btn:active{transform:scale(.97);opacity:.85}
+.bp{background:var(--orange);color:#fff}.bs{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.bg{background:transparent;color:var(--orange);border:1px solid rgba(249,115,22,.3)}
+.bsm{padding:8px 14px;font-size:13px;border-radius:8px;width:auto}
+.inp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:13px 14px;color:var(--text);font-size:15px;font-family:Geist,sans-serif;outline:none;transition:border-color .15s}
+.inp:focus{border-color:var(--orange)}.inp::placeholder{color:var(--muted)}
+.lbl{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:block}
+.ig{margin-bottom:14px}
+.sc{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;font-size:13px;font-weight:700;flex-shrink:0}
+.sh{background:rgba(249,115,22,.2);color:var(--orange);border:2px solid var(--orange)}
+.sw{background:rgba(234,179,8,.2);color:#eab308;border:2px solid #eab308}
+.sl{background:rgba(59,130,246,.2);color:var(--blue);border:2px solid var(--blue)}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.sk{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.sv{font-size:28px;font-weight:700;line-height:1}.sl2{font-size:11px;color:var(--muted);margin-top:4px}
+.sc2{font-size:11px;color:var(--green);margin-top:2px}
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.qb{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:border-color .15s,transform .1s;display:flex;flex-direction:column;align-items:center;gap:8px}
+.qb:active{transform:scale(.96);border-color:var(--orange)}
+.qi{font-size:28px}.ql{font-size:13px;font-weight:600}
+.rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.rt{font-size:16px;font-weight:700}.rl2{font-size:13px;color:var(--orange);cursor:pointer}
+.li{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.li:last-child{border-bottom:none}
+.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#9333ea);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.li-i{flex:1;min-width:0}.li-n{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-c{font-size:13px;color:var(--muted)}.li-t{font-size:11px;color:var(--muted);text-align:right}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:100;display:none;align-items:flex-end}
+.mo.open{display:flex}
+.md{background:var(--bg2);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px 18px 32px;width:100%;max-height:90dvh;overflow-y:auto;animation:su .25s ease}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mh{width:36px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 16px}
+.mt{font-size:18px;font-weight:700;margin-bottom:16px}
+.em{text-align:center;padding:48px 20px;color:var(--muted)}
+.ei{font-size:48px;margin-bottom:12px}.et{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
+.toast{position:fixed;bottom:80px;left:16px;right:16px;background:#1a1a2e;border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:10px;padding:12px 16px;font-size:14px;font-weight:500;z-index:200;transform:translateY(120%);transition:transform .25s ease}
+.toast.show{transform:translateY(0)}
+.ml{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.mi{display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.mi:last-child{border-bottom:none}.mi:active{background:var(--bg3)}
+.mic{font-size:20px;width:28px;text-align:center}.mit{flex:1;font-size:15px}
+.mia{color:var(--muted);font-size:14px}.miv{font-size:13px;color:var(--muted)}
+.ph2{text-align:center;padding:20px 0}
+.pa{width:72px;height:72px;border-radius:50%;margin:0 auto 12px;background:linear-gradient(135deg,var(--orange),#9333ea);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700}
+.pn{font-size:20px;font-weight:700}
+.pp{display:inline-flex;align-items:center;gap:6px;background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.25);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--orange);margin-top:8px}
+.sbox{position:relative;width:220px;height:220px;border:2px solid rgba(249,115,22,.2);border-radius:16px;margin:0 auto 20px;overflow:hidden;background:rgba(249,115,22,.03)}
+.sln{position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,var(--orange),transparent);animation:scn 1.5s ease-in-out infinite}
+@keyframes scn{0%{top:20%}50%{top:80%}100%{top:20%}}
+.scor::before,.scor::after{content:'';position:absolute;width:24px;height:24px;border-color:var(--orange);border-style:solid}
+.scor::before{top:12%;left:12%;border-width:3px 0 0 3px}
+.scor::after{bottom:12%;right:12%;border-width:0 3px 3px 0}
+.dh{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:12px;text-align:center}
+.da{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#9333ea);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin:0 auto 12px}
+.dn{font-size:20px;font-weight:700}.dc{font-size:14px;color:var(--muted);margin-top:2px}
+.ir{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.ir:last-child{border-bottom:none}.iri{font-size:18px;width:24px}.irv{font-size:14px;flex:1}
+</style></head><body>
+
+<div class="screen active" id="sc-home">
+  <div class="topbar"><div class="logo">Lead<span>Capture</span> Pro</div><button class="ta" onclick="openMo('mc')">+ Capturer</button></div>
+  <div class="cnt">
+    <div style="margin-bottom:16px"><div style="font-size:13px;color:var(--muted)">Bonjour 👋</div><div style="font-size:22px;font-weight:800;margin-top:2px">Salon <span id="evn">Tech Expo 2026</span></div></div>
+    <div class="sg"><div class="sk"><div class="sv" id="s1">0</div><div class="sl2">Leads capturés</div><div class="sc2" id="s2">↑ 0 aujourd'hui</div></div><div class="sk"><div class="sv" style="color:var(--orange)" id="s3">0</div><div class="sl2">Leads chauds 🔥</div><div class="sc2" id="s4">Score moy: —</div></div></div>
+    <div class="qa">
+      <div class="qb" onclick="simScan()"><div class="qi">📷</div><div class="ql">Scanner QR</div></div>
+      <div class="qb" onclick="simNFC()"><div class="qi">📲</div><div class="ql">Tap NFC</div></div>
+      <div class="qb" onclick="openMo('mc')"><div class="qi">✏️</div><div class="ql">Saisie rapide</div></div>
+      <div class="qb" onclick="go('sc-leads')"><div class="qi">📋</div><div class="ql">Mes leads</div></div>
+    </div>
+    <div class="rh"><div class="rt">Derniers leads</div><div class="rl2" onclick="go('sc-leads')">Voir tout →</div></div>
+    <div class="card" style="padding:0 16px" id="rl"></div>
+  </div>
+  <nav class="nav"><button class="ni on" onclick="go('sc-home')"><span class="nii">🏠</span>Accueil</button><button class="ni" onclick="go('sc-leads')"><span class="nii">👥</span>Leads</button><button class="ni" onclick="go('sc-scan')"><span class="nii">📷</span>Scanner</button><button class="ni" onclick="go('sc-profile')"><span class="nii">⚙️</span>Profil</button></nav>
+</div>
+
+<div class="screen" id="sc-leads">
+  <div class="topbar"><div class="logo">Lead<span>Capture</span> Pro</div><button class="ta" onclick="openMo('mc')">+ Ajouter</button></div>
+  <div class="cnt">
+    <input class="inp" placeholder="🔍 Rechercher..." id="srch" oninput="rndrL()" style="margin-bottom:14px">
+    <div style="display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px">
+      <button class="btn bsm bp" id="fa" onclick="setFlt('all')">Tous</button>
+      <button class="btn bsm bs" id="fh" onclick="setFlt('hot')">🔥 Chauds</button>
+      <button class="btn bsm bs" id="fw" onclick="setFlt('warm')">🌡️ Tièdes</button>
+      <button class="btn bsm bs" id="fc" onclick="setFlt('cold')">❄️ Froids</button>
+    </div>
+    <div id="ll"></div>
+  </div>
+  <nav class="nav"><button class="ni" onclick="go('sc-home')"><span class="nii">🏠</span>Accueil</button><button class="ni on" onclick="go('sc-leads')"><span class="nii">👥</span>Leads</button><button class="ni" onclick="go('sc-scan')"><span class="nii">📷</span>Scanner</button><button class="ni" onclick="go('sc-profile')"><span class="nii">⚙️</span>Profil</button></nav>
+</div>
+
+<div class="screen" id="sc-scan">
+  <div class="topbar"><div class="logo">Lead<span>Capture</span> Pro</div></div>
+  <div class="cnt" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh">
+    <div class="sbox scor"><div class="sln"></div></div>
+    <div style="font-size:20px;font-weight:700;margin-bottom:8px">Scanner un badge</div>
+    <div style="font-size:14px;color:var(--muted);text-align:center;margin-bottom:28px">Pointez vers un QR code<br>ou appuyez sur un badge NFC</div>
+    <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px">
+      <button class="btn bp" onclick="simScan()">📷 Simuler scan QR</button>
+      <button class="btn bs" onclick="simNFC()">📲 Simuler NFC</button>
+      <button class="btn bg" onclick="openMo('mc')">✏️ Saisie manuelle</button>
+    </div>
+  </div>
+  <nav class="nav"><button class="ni" onclick="go('sc-home')"><span class="nii">🏠</span>Accueil</button><button class="ni" onclick="go('sc-leads')"><span class="nii">👥</span>Leads</button><button class="ni on" onclick="go('sc-scan')"><span class="nii">📷</span>Scanner</button><button class="ni" onclick="go('sc-profile')"><span class="nii">⚙️</span>Profil</button></nav>
+</div>
+
+<div class="screen" id="sc-profile">
+  <div class="topbar"><div class="logo">Lead<span>Capture</span> Pro</div></div>
+  <div class="cnt">
+    <div class="ph2"><div class="pa">O</div><div class="pn">Olivier J.</div><div class="pp">⚡ Plan Pro</div></div>
+    <div style="margin-bottom:12px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Salon actuel</div>
+    <div class="ml" style="margin-bottom:16px"><div class="mi" onclick="openMo('me')"><span class="mic">🎪</span><span class="mit">Événement</span><span class="miv" id="pe">Tech Expo 2026</span><span class="mia">›</span></div></div>
+    <div style="margin-bottom:12px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Mon compte</div>
+    <div class="ml" style="margin-bottom:16px">
+      <div class="mi"><span class="mic">💳</span><span class="mit">Abonnement</span><span class="miv">Pro — 49€/mois</span><span class="mia">›</span></div>
+      <div class="mi" onclick="xprtCSV()"><span class="mic">📤</span><span class="mit">Exporter CSV</span><span class="mia">›</span></div>
+    </div>
+    <div class="ml"><div class="mi" onclick="clrAll()"><span class="mic">🗑️</span><span class="mit" style="color:var(--red)">Effacer tous les leads</span><span class="mia">›</span></div></div>
+    <div style="text-align:center;margin-top:24px;font-size:12px;color:var(--muted)">LeadCapture Pro v1.0 · <a href="https://leadcapturepro.fr/cgv.html" style="color:var(--muted)">CGV</a></div>
+  </div>
+  <nav class="nav"><button class="ni" onclick="go('sc-home')"><span class="nii">🏠</span>Accueil</button><button class="ni" onclick="go('sc-leads')"><span class="nii">👥</span>Leads</button><button class="ni" onclick="go('sc-scan')"><span class="nii">📷</span>Scanner</button><button class="ni on" onclick="go('sc-profile')"><span class="nii">⚙️</span>Profil</button></nav>
+</div>
+
+<div class="screen" id="sc-detail">
+  <div class="topbar"><button class="tb" onclick="go('sc-leads')">←</button><div class="tt">Détail lead</div><button class="ta" onclick="delLd()">Supprimer</button></div>
+  <div class="cnt" id="dc"></div>
+</div>
+
+<div class="mo" id="mc" onclick="if(event.target===this)closeMo('mc')">
+  <div class="md">
+    <div class="mh"></div><div class="mt">📝 Nouveau lead</div>
+    <div class="ig"><label class="lbl">Prénom *</label><input class="inp" id="cfn" placeholder="Jean"></div>
+    <div class="ig"><label class="lbl">Nom *</label><input class="inp" id="cln" placeholder="Dupont"></div>
+    <div class="ig"><label class="lbl">Email *</label><input class="inp" id="cem" type="email" placeholder="jean@entreprise.com"></div>
+    <div class="ig"><label class="lbl">Entreprise</label><input class="inp" id="cco" placeholder="Acme Corp"></div>
+    <div class="ig"><label class="lbl">Téléphone</label><input class="inp" id="cph" type="tel" placeholder="+33 6 00 00 00 00"></div>
+    <div class="ig"><label class="lbl">Intérêt</label><input class="inp" id="cin" placeholder="Cherche CRM, budget Q3..."></div>
+    <div class="ig"><label class="lbl">Température</label><select class="inp" id="ctp"><option value="hot">🔥 Chaud</option><option value="warm" selected>🌡️ Tiède</option><option value="cold">❄️ Froid</option></select></div>
+    <div class="ig"><label class="lbl">Notes</label><input class="inp" id="cno" placeholder="Rappeler lundi..."></div>
+    <button class="btn bp" onclick="svLd()" style="margin-top:4px">✅ Sauvegarder</button>
+    <button class="btn bg" onclick="closeMo('mc')" style="margin-top:8px">Annuler</button>
+  </div>
+</div>
+
+<div class="mo" id="me" onclick="if(event.target===this)closeMo('me')">
+  <div class="md">
+    <div class="mh"></div><div class="mt">🎪 Nom du salon</div>
+    <div class="ig"><label class="lbl">Événement</label><input class="inp" id="einp" placeholder="Ex: Viva Technology 2026"></div>
+    <button class="btn bp" onclick="svEv()">Sauvegarder</button>
+    <button class="btn bg" onclick="closeMo('me')" style="margin-top:8px">Annuler</button>
+  </div>
+</div>
+
+<div class="toast" id="tst"></div>
+
+<script>
+let leads=JSON.parse(localStorage.getItem('lcp-leads')||'[]'),flt='all',curId=null;
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='sc-home')rndrH();if(id==='sc-leads')rndrL();window.scrollTo(0,0)}
+function openMo(id){document.getElementById(id).classList.add('open');if(id==='me')document.getElementById('einp').value=localStorage.getItem('lcp-ev')||'Tech Expo 2026'}
+function closeMo(id){document.getElementById(id).classList.remove('open')}
+function toast(m){const t=document.getElementById('tst');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+function sc(l){let s=50;if(l.email)s+=15;if(l.phone)s+=10;if(l.company)s+=8;if(l.interest&&l.interest.length>10)s+=12;if(l.temp==='hot')s+=15;else if(l.temp==='cold')s-=15;if(l.notes&&l.notes.length>5)s+=8;return Math.min(99,Math.max(10,s))}
+function cls(s){return s>=70?'sh':s>=45?'sw':'sl'}
+function gt(s){return s>=70?'hot':s>=45?'warm':'cold'}
+function av2(l){return((l.fn||'?')[0]+(l.ln||'?')[0]).toUpperCase()}
+function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return"à l'instant";if(s<3600)return~~(s/60)+'min';if(s<86400)return~~(s/3600)+'h';return~~(s/86400)+'j'}
+function svLd(){
+  const fn=document.getElementById('cfn').value.trim(),ln=document.getElementById('cln').value.trim(),em=document.getElementById('cem').value.trim();
+  if(!fn||!ln||!em){toast('⚠️ Prénom, nom et email requis');return}
+  const l={id:''+Date.now(),fn,ln,email:em,company:document.getElementById('cco').value.trim(),phone:document.getElementById('cph').value.trim(),interest:document.getElementById('cin').value.trim(),temp:document.getElementById('ctp').value,notes:document.getElementById('cno').value.trim(),event:localStorage.getItem('lcp-ev')||'Tech Expo 2026',at:new Date().toISOString()};
+  l.score=sc(l);leads.unshift(l);sv();
+  ['cfn','cln','cem','cco','cph','cin','cno'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('ctp').value='warm';closeMo('mc');toast('✅ Lead sauvegardé ! Score IA: '+l.score+'/100');rndrH();rndrL()
+}
+function sv(){localStorage.setItem('lcp-leads',JSON.stringify(leads))}
+function liH(l){const c=cls(l.score);return '<div class="li" onclick="dtl(''+l.id+'')"><div class="av">'+av2(l)+'</div><div class="li-i"><div class="li-n">'+l.fn+' '+l.ln+'</div><div class="li-c">'+(l.company||l.email)+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="sc '+c+'">'+l.score+'</div><div class="li-t">'+ago(l.at)+'</div></div></div>'}
+function rndrH(){
+  const ev=localStorage.getItem('lcp-ev')||'Tech Expo 2026';
+  document.getElementById('evn').textContent=ev;
+  const tot=leads.length,hot=leads.filter(l=>gt(l.score)==='hot').length;
+  const td=leads.filter(l=>l.at.startsWith(new Date().toISOString().slice(0,10))).length;
+  const avg=tot?Math.round(leads.reduce((a,l)=>a+l.score,0)/tot):0;
+  document.getElementById('s1').textContent=tot;document.getElementById('s3').textContent=hot;
+  document.getElementById('s2').textContent='↑ '+td+" aujourd'hui";
+  document.getElementById('s4').textContent=tot?'Score moy: '+avg+'/100':'Score moy: —';
+  const el=document.getElementById('rl');const rec=leads.slice(0,5);
+  el.innerHTML=rec.length?rec.map(liH).join(''):'<div class="em" style="padding:24px"><div class="ei">🎯</div><div class="et">Aucun lead encore</div><div style="font-size:13px;margin-top:4px">Capturez votre premier lead !</div></div>'
+}
+function setFlt(f){flt=f;['all','hot','warm','cold'].forEach((k,i)=>{const ids=['fa','fh','fw','fc'];document.getElementById(ids[i]).className='btn bsm '+(k===f?'bp':'bs')});rndrL()}
+function rndrL(){
+  const q=(document.getElementById('srch')?.value||'').toLowerCase();
+  let list=leads;if(flt!=='all')list=list.filter(l=>gt(l.score)===flt);
+  if(q)list=list.filter(l=>(l.fn+' '+l.ln+' '+(l.company||'')+' '+l.email).toLowerCase().includes(q));
+  const el=document.getElementById('ll');
+  el.innerHTML=list.length?'<div class="card" style="padding:0 16px">'+list.map(liH).join('')+'</div>':'<div class="em"><div class="ei">🔍</div><div class="et">Aucun résultat</div></div>'
+}
+function dtl(id){
+  const l=leads.find(x=>x.id===id);if(!l)return;curId=id;
+  const c=cls(l.score),col=c==='sh'?'var(--orange)':c==='sw'?'#eab308':'var(--blue)';
+  const lbl=c==='sh'?'🔥 Chaud':c==='sw'?'🌡️ Tiède':'❄️ Froid';
+  document.getElementById('dc').innerHTML='<div class="dh"><div class="da">'+av2(l)+'</div><div class="dn">'+l.fn+' '+l.ln+'</div><div class="dc">'+(l.company||'')+'</div><div style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:12px"><div class="sc '+c+'" style="width:52px;height:52px;font-size:16px">'+l.score+'</div><div><div style="font-size:11px;color:var(--muted)">Score IA</div><div style="font-size:13px;font-weight:700;color:'+col+'">'+lbl+'</div></div></div></div><div class="card">'+(l.email?'<div class="ir"><div class="iri">✉️</div><div class="irv">'+l.email+'</div></div>':'')+(l.phone?'<div class="ir"><div class="iri">📞</div><div class="irv">'+l.phone+'</div></div>':'')+(l.company?'<div class="ir"><div class="iri">🏢</div><div class="irv">'+l.company+'</div></div>':'')+(l.interest?'<div class="ir"><div class="iri">💡</div><div class="irv">'+l.interest+'</div></div>':'')+(l.notes?'<div class="ir"><div class="iri">📝</div><div class="irv">'+l.notes+'</div></div>':'')+'<div class="ir"><div class="iri">🎪</div><div class="irv">'+l.event+'</div></div><div class="ir"><div class="iri">🕐</div><div class="irv">'+new Date(l.at).toLocaleString('fr-FR')+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><a href="mailto:'+l.email+'" class="btn bs" style="text-decoration:none">✉️ Email</a>'+(l.phone?'<a href="tel:'+l.phone+'" class="btn bs" style="text-decoration:none">📞 Appeler</a>':'<div></div>')+'</div>';
+  go('sc-detail')
+}
+function delLd(){if(!curId||!confirm('Supprimer ?'))return;leads=leads.filter(l=>l.id!==curId);sv();toast('🗑️ Lead supprimé');go('sc-leads')}
+const DEMO=[
+  {fn:'Marie',ln:'Bernard',em:'m.bernard@solutionspro.fr',co:'Solutions Pro',ph:'+33 6 11 22 33 44',int:'CRM pour équipe de 12, budget validé',tp:'hot',no:'RDV semaine prochaine'},
+  {fn:'Thomas',ln:'Martin',em:'t.martin@innotech.com',co:'InnoTech',ph:'+33 7 55 44 33 22',int:'Intéressé par NFC',tp:'warm',no:'Rappeler en septembre'},
+  {fn:'Sophie',ln:'Leclerc',em:'sophie@startup.io',co:'Startup.io',ph:'',int:'Découverte produit',tp:'cold',no:''},
+  {fn:'Pierre',ln:'Dubois',em:'p.dubois@grandgroupe.fr',co:'Grand Groupe SA',ph:'+33 6 88 77 66 55',int:'Pilote 50 commerciaux Q4',tp:'hot',no:'Contacter DSI'},
+  {fn:'Julie',ln:'Petit',em:'j.petit@agence.com',co:'Agence Digital',ph:'+33 6 33 44 55 66',int:'Pour clients évènementiels',tp:'warm',no:'Envoyer doc tarifaire'},
+];
+let di=0;
+function simScan(){const c=DEMO[di%5];di++;document.getElementById('cfn').value=c.fn;document.getElementById('cln').value=c.ln;document.getElementById('cem').value=c.em;document.getElementById('cco').value=c.co;document.getElementById('cph').value=c.ph;document.getElementById('cin').value=c.int;document.getElementById('ctp').value=c.tp;document.getElementById('cno').value=c.no;toast('📷 QR scanné ! Vérifiez et sauvegardez.');openMo('mc')}
+function simNFC(){simScan();toast('📲 Badge NFC lu !')}
+function svEv(){const v=document.getElementById('einp').value.trim();if(!v)return;localStorage.setItem('lcp-ev',v);document.getElementById('evn').textContent=v;document.getElementById('pe').textContent=v;closeMo('me');toast('✅ Événement mis à jour')}
+function xprtCSV(){if(!leads.length){toast('⚠️ Aucun lead');return}const h='Prénom,Nom,Email,Entreprise,Téléphone,Score,Temp,Intérêt,Notes,Événement,Date';const rows=leads.map(l=>[l.fn,l.ln,l.email,l.company,l.phone,l.score,l.temp,l.interest,l.notes,l.event,l.at].map(v=>'"'+(v||'').replace(/"/g,'""')+'"').join(','));const blob=new Blob(['﻿'+[h,...rows].join('
+')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='leads-'+Date.now()+'.csv';a.click();toast('📤 CSV exporté !')}
+function clrAll(){if(!confirm('Effacer TOUS les leads ?'))return;leads=[];sv();toast('🗑️ Leads effacés');rndrH();rndrL()}
+rndrH();
+const ev=localStorage.getItem('lcp-ev')||'Tech Expo 2026';
+document.getElementById('pe').textContent=ev;
+document.getElementById('evn').textContent=ev;
+if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script></body></html>
