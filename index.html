@@ -15,6 +15,17 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-height:100dvh;overflow-x:hidden;padding-top:var(--st);padding-bottom:var(--sb)}
 .screen{display:none;flex-direction:column;min-height:100dvh}.screen.active{display:flex}
+/* AUTH SCREENS */
+.auth-wrap{display:flex;align-items:center;justify-content:center;min-height:100dvh;padding:20px}
+.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:36px 28px;width:100%;max-width:380px;text-align:center}
+.auth-logo{font-size:32px;font-weight:900;margin-bottom:4px}.auth-logo span{color:var(--orange)}
+.auth-sub{color:var(--muted);font-size:13px;margin-bottom:28px}
+.auth-icon{font-size:48px;margin-bottom:16px}
+.auth-title{font-size:20px;font-weight:700;margin-bottom:8px}
+.auth-msg{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px}
+/* EXPIRED */
+.expired-badge{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red);padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;margin-bottom:20px}
+/* NAV */
 .topbar{position:sticky;top:0;z-index:50;background:rgba(8,9,13,.95);backdrop-filter:blur(12px);padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
 .logo{font-size:15px;font-weight:700}.logo span{color:var(--orange)}
 .ta{background:none;border:none;color:var(--orange);font-size:14px;font-weight:600;cursor:pointer;margin-left:auto}
@@ -78,17 +89,46 @@ body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-hei
 .scor::before,.scor::after{content:'';position:absolute;width:24px;height:24px;border-color:var(--orange);border-style:solid}
 .scor::before{top:12%;left:12%;border-width:3px 0 0 3px}
 .scor::after{bottom:12%;right:12%;border-width:0 3px 3px 0}
+.ir{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.ir:last-child{border-bottom:none}.iri{font-size:18px;width:24px}.irv{font-size:14px;flex:1}
 .dh{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:12px;text-align:center}
 .da{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#9333ea);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin:0 auto 12px}
 .dn{font-size:20px;font-weight:700}.dc{font-size:14px;color:var(--muted);margin-top:2px}
-.ir{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
-.ir:last-child{border-bottom:none}.iri{font-size:18px;width:24px}.irv{font-size:14px;flex:1}
+.trial-bar{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.2);border-radius:10px;padding:10px 14px;font-size:13px;color:#eab308;margin-bottom:12px;text-align:center}
 </style></head><body>
+
+<!-- ═══ LOADING ═══ -->
+<div class="auth-wrap" id="sc-loading">
+  <div style="text-align:center">
+    <div class="auth-logo">Lead<span>Capture</span> Pro</div>
+    <div style="color:var(--muted);font-size:14px;margin-top:12px">Vérification en cours...</div>
+    <div style="margin-top:20px;font-size:32px;animation:spin 1s linear infinite">⏳</div>
+  </div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<!-- ═══ EXPIRED ═══ -->
+<div class="auth-wrap" id="sc-expired" style="display:none">
+  <div class="auth-card">
+    <div class="auth-logo">Lead<span>Capture</span> Pro</div>
+    <div style="height:1px;background:var(--border);margin:16px 0"></div>
+    <div class="auth-icon">😔</div>
+    <div class="auth-title">Abonnement expiré</div>
+    <div class="expired-badge">⚠️ Votre accès a expiré ou été révoqué</div>
+    <div class="auth-msg">Pour continuer à utiliser LeadCapture Pro, souscrivez à un abonnement ou contactez Olivier.</div>
+    <a href="https://leadcapturepro.fr/#pricing" class="btn bp" style="text-decoration:none;margin-bottom:10px">💳 Voir les abonnements</a>
+    <a href="mailto:olivier@oj-sales.com" class="btn bs" style="text-decoration:none">✉️ Contacter Olivier</a>
+  </div>
+</div>
+
+<!-- ═══ APP (toutes les screens) ═══ -->
+<div id="app-root" style="display:none">
 
 <div class="screen active" id="sc-home">
   <div class="topbar"><div class="logo">Lead<span>Capture</span> Pro</div><button class="ta" onclick="openMo('mc')">+ Capturer</button></div>
   <div class="cnt">
-    <div style="margin-bottom:16px"><div style="font-size:13px;color:var(--muted)">Bonjour 👋</div><div style="font-size:22px;font-weight:800;margin-top:2px">Salon <span id="evn">Tech Expo 2026</span></div></div>
+    <div id="trial-banner" style="display:none"></div>
+    <div style="margin-bottom:16px"><div style="font-size:13px;color:var(--muted)">Bonjour <span id="user-name">👋</span></div><div style="font-size:22px;font-weight:800;margin-top:2px">Salon <span id="evn">Tech Expo 2026</span></div></div>
     <div class="sg"><div class="sk"><div class="sv" id="s1">0</div><div class="sl2">Leads capturés</div><div class="sc2" id="s2">↑ 0 aujourd'hui</div></div><div class="sk"><div class="sv" style="color:var(--orange)" id="s3">0</div><div class="sl2">Leads chauds 🔥</div><div class="sc2" id="s4">Score moy: —</div></div></div>
     <div class="qa">
       <div class="qb" onclick="simScan()"><div class="qi">📷</div><div class="ql">Scanner QR</div></div>
@@ -135,16 +175,21 @@ body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-hei
 <div class="screen" id="sc-profile">
   <div class="topbar"><div class="logo">Lead<span>Capture</span> Pro</div></div>
   <div class="cnt">
-    <div class="ph2"><div class="pa">O</div><div class="pn">Olivier J.</div><div class="pp">⚡ Plan Pro</div></div>
+    <div class="ph2">
+      <div class="pa" id="prof-av">O</div>
+      <div class="pn" id="prof-name">—</div>
+      <div class="pp" id="prof-plan">⚡ Plan —</div>
+    </div>
     <div style="margin-bottom:12px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Salon actuel</div>
     <div class="ml" style="margin-bottom:16px"><div class="mi" onclick="openMo('me')"><span class="mic">🎪</span><span class="mit">Événement</span><span class="miv" id="pe">Tech Expo 2026</span><span class="mia">›</span></div></div>
     <div style="margin-bottom:12px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Mon compte</div>
     <div class="ml" style="margin-bottom:16px">
-      <div class="mi"><span class="mic">💳</span><span class="mit">Abonnement</span><span class="miv">Pro — 49€/mois</span><span class="mia">›</span></div>
+      <div class="mi"><span class="mic">📧</span><span class="mit">Email</span><span class="miv" id="prof-email">—</span></div>
       <div class="mi" onclick="xprtCSV()"><span class="mic">📤</span><span class="mit">Exporter CSV</span><span class="mia">›</span></div>
     </div>
-    <div class="ml"><div class="mi" onclick="clrAll()"><span class="mic">🗑️</span><span class="mit" style="color:var(--red)">Effacer tous les leads</span><span class="mia">›</span></div></div>
-    <div style="text-align:center;margin-top:24px;font-size:12px;color:var(--muted)">LeadCapture Pro v1.0 · <a href="https://leadcapturepro.fr/cgv.html" style="color:var(--muted)">CGV</a></div>
+    <div class="ml" style="margin-bottom:16px"><div class="mi" onclick="clrAll()"><span class="mic">🗑️</span><span class="mit" style="color:var(--red)">Effacer tous les leads</span><span class="mia">›</span></div></div>
+    <button class="btn bs" onclick="doLogout()" style="margin-bottom:8px">🚪 Se déconnecter</button>
+    <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--muted)">LeadCapture Pro v1.0 · <a href="https://leadcapturepro.fr/cgv.html" style="color:var(--muted)">CGV</a></div>
   </div>
   <nav class="nav"><button class="ni" onclick="go('sc-home')"><span class="nii">🏠</span>Accueil</button><button class="ni" onclick="go('sc-leads')"><span class="nii">👥</span>Leads</button><button class="ni" onclick="go('sc-scan')"><span class="nii">📷</span>Scanner</button><button class="ni on" onclick="go('sc-profile')"><span class="nii">⚙️</span>Profil</button></nav>
 </div>
@@ -154,6 +199,9 @@ body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-hei
   <div class="cnt" id="dc"></div>
 </div>
 
+</div><!-- /app-root -->
+
+<!-- MODALS -->
 <div class="mo" id="mc" onclick="if(event.target===this)closeMo('mc')">
   <div class="md">
     <div class="mh"></div><div class="mt">📝 Nouveau lead</div>
@@ -169,7 +217,6 @@ body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-hei
     <button class="btn bg" onclick="closeMo('mc')" style="margin-top:8px">Annuler</button>
   </div>
 </div>
-
 <div class="mo" id="me" onclick="if(event.target===this)closeMo('me')">
   <div class="md">
     <div class="mh"></div><div class="mt">🎪 Nom du salon</div>
@@ -178,11 +225,117 @@ body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-hei
     <button class="btn bg" onclick="closeMo('me')" style="margin-top:8px">Annuler</button>
   </div>
 </div>
-
 <div class="toast" id="tst"></div>
 
 <script>
+const API = 'https://leadcapturepro-production.up.railway.app';
 let leads=JSON.parse(localStorage.getItem('lcp-leads')||'[]'),flt='all',curId=null;
+let currentUser = null;
+
+// ═══ AUTH ═══
+async function initAuth() {
+  // 1. Vérifier si on arrive avec un token magique dans l'URL
+  const params = new URLSearchParams(window.location.search);
+  const magicToken = params.get('token');
+
+  if (magicToken) {
+    // Nettoyer l'URL
+    window.history.replaceState({}, '', '/');
+    try {
+      const r = await fetch(API + '/api/auth/verify?token=' + magicToken);
+      const d = await r.json();
+      if (r.ok && d.jwt) {
+        localStorage.setItem('lcp-jwt', d.jwt);
+        localStorage.setItem('lcp-email', d.client.email);
+        localStorage.setItem('lcp-name', d.client.name);
+        localStorage.setItem('lcp-plan', d.client.plan);
+        currentUser = d.client;
+        showApp();
+        return;
+      } else if (d.error === 'inactive' || d.error === 'trial_expired') {
+        showExpired();
+        return;
+      }
+    } catch(e) {}
+    showExpired();
+    return;
+  }
+
+  // 2. Vérifier JWT stocké
+  const jwt = localStorage.getItem('lcp-jwt');
+  const email = localStorage.getItem('lcp-email');
+  if (!jwt || !email) { showExpired(); return; }
+
+  try {
+    const r = await fetch(API + '/api/auth/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, jwtToken: jwt })
+    });
+    const d = await r.json();
+    if (r.ok && d.valid) {
+      currentUser = { email, name: d.name || localStorage.getItem('lcp-name'), plan: d.plan, trialEndsAt: d.trialEndsAt };
+      showApp();
+    } else {
+      showExpired();
+    }
+  } catch(e) {
+    // Erreur réseau — on laisse accéder en mode offline si JWT existe
+    currentUser = {
+      email,
+      name: localStorage.getItem('lcp-name') || email,
+      plan: localStorage.getItem('lcp-plan') || 'free'
+    };
+    showApp();
+  }
+}
+
+function showApp() {
+  document.getElementById('sc-loading').style.display = 'none';
+  document.getElementById('sc-expired').style.display = 'none';
+  document.getElementById('app-root').style.display = 'block';
+
+  // Mettre à jour le profil
+  if (currentUser) {
+    const name = currentUser.name || currentUser.email || '';
+    document.getElementById('user-name').textContent = (name.split(' ')[0] || '') + ' 👋';
+    document.getElementById('prof-name').textContent = name;
+    document.getElementById('prof-email').textContent = currentUser.email || '';
+    document.getElementById('prof-av').textContent = (name[0] || 'U').toUpperCase();
+    document.getElementById('prof-plan').textContent = '⚡ Plan ' + (currentUser.plan || 'Free');
+
+    // Afficher bannière trial si applicable
+    if (currentUser.trialEndsAt) {
+      const daysLeft = Math.ceil((new Date(currentUser.trialEndsAt) - Date.now()) / 86400000);
+      if (daysLeft > 0 && daysLeft <= 7) {
+        const b = document.getElementById('trial-banner');
+        b.style.display = 'block';
+        b.innerHTML = '<div class="trial-bar">⏱ Accès gratuit — expire dans ' + daysLeft + ' jour(s)</div>';
+      }
+    }
+  }
+  rndrH();
+  const ev = localStorage.getItem('lcp-ev') || 'Tech Expo 2026';
+  document.getElementById('pe').textContent = ev;
+  document.getElementById('evn').textContent = ev;
+}
+
+function showExpired() {
+  document.getElementById('sc-loading').style.display = 'none';
+  document.getElementById('app-root').style.display = 'none';
+  document.getElementById('sc-expired').style.display = 'flex';
+}
+
+function doLogout() {
+  if (!confirm('Se déconnecter ?')) return;
+  localStorage.removeItem('lcp-jwt');
+  localStorage.removeItem('lcp-email');
+  localStorage.removeItem('lcp-name');
+  localStorage.removeItem('lcp-plan');
+  showExpired();
+}
+
+// ═══ APP LOGIC ═══
 function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='sc-home')rndrH();if(id==='sc-leads')rndrL();window.scrollTo(0,0)}
 function openMo(id){document.getElementById(id).classList.add('open');if(id==='me')document.getElementById('einp').value=localStorage.getItem('lcp-ev')||'Tech Expo 2026'}
 function closeMo(id){document.getElementById(id).classList.remove('open')}
@@ -201,7 +354,7 @@ function svLd(){
   document.getElementById('ctp').value='warm';closeMo('mc');toast('✅ Lead sauvegardé ! Score IA: '+l.score+'/100');rndrH();rndrL()
 }
 function sv(){localStorage.setItem('lcp-leads',JSON.stringify(leads))}
-function liH(l){const c=cls(l.score);return '<div class="li" onclick="dtl(''+l.id+'')"><div class="av">'+av2(l)+'</div><div class="li-i"><div class="li-n">'+l.fn+' '+l.ln+'</div><div class="li-c">'+(l.company||l.email)+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="sc '+c+'">'+l.score+'</div><div class="li-t">'+ago(l.at)+'</div></div></div>'}
+function liH(l){const c=cls(l.score);return '<div class="li" onclick="dtl(\''+l.id+'\')"><div class="av">'+av2(l)+'</div><div class="li-i"><div class="li-n">'+l.fn+' '+l.ln+'</div><div class="li-c">'+(l.company||l.email)+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="sc '+c+'">'+l.score+'</div><div class="li-t">'+ago(l.at)+'</div></div></div>'}
 function rndrH(){
   const ev=localStorage.getItem('lcp-ev')||'Tech Expo 2026';
   document.getElementById('evn').textContent=ev;
@@ -244,9 +397,8 @@ function svEv(){const v=document.getElementById('einp').value.trim();if(!v)retur
 function xprtCSV(){if(!leads.length){toast('⚠️ Aucun lead');return}const h='Prénom,Nom,Email,Entreprise,Téléphone,Score,Temp,Intérêt,Notes,Événement,Date';const rows=leads.map(l=>[l.fn,l.ln,l.email,l.company,l.phone,l.score,l.temp,l.interest,l.notes,l.event,l.at].map(v=>'"'+(v||'').replace(/"/g,'""')+'"').join(','));const blob=new Blob(['﻿'+[h,...rows].join('
 ')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='leads-'+Date.now()+'.csv';a.click();toast('📤 CSV exporté !')}
 function clrAll(){if(!confirm('Effacer TOUS les leads ?'))return;leads=[];sv();toast('🗑️ Leads effacés');rndrH();rndrL()}
-rndrH();
-const ev=localStorage.getItem('lcp-ev')||'Tech Expo 2026';
-document.getElementById('pe').textContent=ev;
-document.getElementById('evn').textContent=ev;
+
+// ═══ INIT ═══
+initAuth();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script></body></html>
