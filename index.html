@@ -234,15 +234,16 @@ let currentUser = null;
 
 // ═══ AUTH ═══
 async function initAuth() {
-  // 1. Vérifier si on arrive avec un token magique dans l'URL
   const params = new URLSearchParams(window.location.search);
   const magicToken = params.get('token');
 
   if (magicToken) {
-    // Nettoyer l'URL
     window.history.replaceState({}, '', '/');
     try {
-      const r = await fetch(API + '/api/auth/verify?token=' + magicToken);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000);
+      const r = await fetch(API + '/api/auth/verify?token=' + magicToken, { signal: controller.signal });
+      clearTimeout(timeout);
       const d = await r.json();
       if (r.ok && d.jwt) {
         localStorage.setItem('lcp-jwt', d.jwt);
@@ -261,26 +262,36 @@ async function initAuth() {
     return;
   }
 
-  // 2. Vérifier JWT stocké
+  // Pas de token magique — vérifier JWT local
   const jwt = localStorage.getItem('lcp-jwt');
   const email = localStorage.getItem('lcp-email');
+
+  // Pas de JWT → écran expiré directement, sans appel réseau
   if (!jwt || !email) { showExpired(); return; }
 
+  // JWT présent → vérifier en ligne avec timeout
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000);
     const r = await fetch(API + '/api/auth/check', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, jwtToken: jwt })
+      body: JSON.stringify({ email, jwtToken: jwt }),
+      signal: controller.signal
     });
+    clearTimeout(timeout);
     const d = await r.json();
     if (r.ok && d.valid) {
       currentUser = { email, name: d.name || localStorage.getItem('lcp-name'), plan: d.plan, trialEndsAt: d.trialEndsAt };
       showApp();
     } else {
+      // Token invalide ou révoqué
+      localStorage.removeItem('lcp-jwt');
+      localStorage.removeItem('lcp-email');
       showExpired();
     }
   } catch(e) {
-    // Erreur réseau — on laisse accéder en mode offline si JWT existe
+    // Réseau indisponible → mode offline si JWT existe
     currentUser = {
       email,
       name: localStorage.getItem('lcp-name') || email,
