@@ -9,23 +9,39 @@
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <title>LeadCapture Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#08090d;--bg2:#0f1117;--bg3:#161820;--orange:#f97316;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--text:#f0f1f5;--muted:#9ca3af;--border:rgba(255,255,255,.08);--r:12px;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+:root{--bg:#08090d;--bg2:#0f1117;--bg3:#161820;--orange:#f97316;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--yellow:#eab308;--text:#f0f1f5;--muted:#9ca3af;--border:rgba(255,255,255,.08);--r:12px;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-height:100dvh;overflow-x:hidden;padding-top:var(--st);padding-bottom:var(--sb)}
 .screen{display:none;flex-direction:column;min-height:100dvh}.screen.active{display:flex}
-/* AUTH SCREENS */
-.auth-wrap{display:flex;align-items:center;justify-content:center;min-height:100dvh;padding:20px}
-.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:36px 28px;width:100%;max-width:380px;text-align:center}
-.auth-logo{font-size:32px;font-weight:900;margin-bottom:4px}.auth-logo span{color:var(--orange)}
-.auth-sub{color:var(--muted);font-size:13px;margin-bottom:28px}
-.auth-icon{font-size:48px;margin-bottom:16px}
-.auth-title{font-size:20px;font-weight:700;margin-bottom:8px}
-.auth-msg{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px}
-/* EXPIRED */
-.expired-badge{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red);padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;margin-bottom:20px}
-/* NAV */
+
+/* ── AUTH ── */
+.auth-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100dvh;padding:24px}
+.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:32px 24px;width:100%;max-width:400px}
+.auth-logo{font-size:22px;font-weight:900;text-align:center;margin-bottom:24px}
+.auth-logo span{color:var(--orange)}
+.auth-icon{font-size:44px;text-align:center;margin-bottom:12px}
+.auth-title{font-size:20px;font-weight:700;text-align:center;margin-bottom:8px}
+.auth-sub{color:var(--muted);font-size:14px;text-align:center;line-height:1.6;margin-bottom:24px}
+.inp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:13px 14px;color:var(--text);font-size:16px;font-family:Geist,sans-serif;outline:none;transition:border-color .15s;margin-bottom:12px;-webkit-appearance:none}
+.inp:focus{border-color:var(--orange)}.inp::placeholder{color:var(--muted)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;border-radius:10px;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:opacity .15s,transform .1s;width:100%;text-decoration:none}
+.btn:active{transform:scale(.97);opacity:.85}
+.bp{background:var(--orange);color:#fff}
+.bs{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.bg2btn{background:transparent;color:var(--orange);border:1px solid rgba(249,115,22,.3)}
+.bsm{padding:8px 14px;font-size:13px;border-radius:8px;width:auto}
+.err-msg{color:var(--red);font-size:13px;text-align:center;min-height:20px;margin-bottom:8px}
+.divider{height:1px;background:var(--border);margin:20px 0;position:relative}
+.divider span{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--bg2);padding:0 10px;font-size:12px;color:var(--muted)}
+
+/* ── STATUS CARD (inactive/unknown) ── */
+.status-badge{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;margin-bottom:16px;font-size:14px;font-weight:500}
+.badge-red{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red)}
+.badge-yellow{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.2);color:var(--yellow)}
+
+/* ── APP NAV ── */
 .topbar{position:sticky;top:0;z-index:50;background:rgba(8,9,13,.95);backdrop-filter:blur(12px);padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
 .logo{font-size:15px;font-weight:700}.logo span{color:var(--orange)}
 .ta{background:none;border:none;color:var(--orange);font-size:14px;font-weight:600;cursor:pointer;margin-left:auto}
@@ -36,22 +52,10 @@ body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-hei
 .ni.on{color:var(--orange)}.nii{font-size:20px;line-height:1}
 .cnt{flex:1;overflow-y:auto;padding:16px 16px 90px}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;border-radius:10px;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:opacity .15s,transform .1s;width:100%}
-.btn:active{transform:scale(.97);opacity:.85}
-.bp{background:var(--orange);color:#fff}.bs{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
-.bg{background:transparent;color:var(--orange);border:1px solid rgba(249,115,22,.3)}
-.bsm{padding:8px 14px;font-size:13px;border-radius:8px;width:auto}
-.inp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:13px 14px;color:var(--text);font-size:15px;font-family:Geist,sans-serif;outline:none;transition:border-color .15s}
-.inp:focus{border-color:var(--orange)}.inp::placeholder{color:var(--muted)}
-.lbl{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:block}
-.ig{margin-bottom:14px}
-.sc{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;font-size:13px;font-weight:700;flex-shrink:0}
-.sh{background:rgba(249,115,22,.2);color:var(--orange);border:2px solid var(--orange)}
-.sw{background:rgba(234,179,8,.2);color:#eab308;border:2px solid #eab308}
-.sl{background:rgba(59,130,246,.2);color:var(--blue);border:2px solid var(--blue)}
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .sk{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
-.sv{font-size:28px;font-weight:700;line-height:1}.sl2{font-size:11px;color:var(--muted);margin-top:4px}
+.sv{font-size:28px;font-weight:700;line-height:1}
+.sl2{font-size:11px;color:var(--muted);margin-top:4px}
 .sc2{font-size:11px;color:var(--green);margin-top:2px}
 .qa{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .qb{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:border-color .15s,transform .1s;display:flex;flex-direction:column;align-items:center;gap:8px}
@@ -64,12 +68,17 @@ body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-hei
 .av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#9333ea);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
 .li-i{flex:1;min-width:0}.li-n{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .li-c{font-size:13px;color:var(--muted)}.li-t{font-size:11px;color:var(--muted);text-align:right}
+.sc-badge{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;font-size:13px;font-weight:700;flex-shrink:0}
+.shb{background:rgba(249,115,22,.2);color:var(--orange);border:2px solid var(--orange)}
+.swb{background:rgba(234,179,8,.2);color:#eab308;border:2px solid #eab308}
+.slb{background:rgba(59,130,246,.2);color:var(--blue);border:2px solid var(--blue)}
 .mo{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:100;display:none;align-items:flex-end}
 .mo.open{display:flex}
 .md{background:var(--bg2);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px 18px 32px;width:100%;max-height:90dvh;overflow-y:auto;animation:su .25s ease}
 @keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .mh{width:36px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 16px}
 .mt{font-size:18px;font-weight:700;margin-bottom:16px}
+.ig{margin-bottom:14px}.lbl{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:block}
 .em{text-align:center;padding:48px 20px;color:var(--muted)}
 .ei{font-size:48px;margin-bottom:12px}.et{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
 .toast{position:fixed;bottom:80px;left:16px;right:16px;background:#1a1a2e;border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:10px;padding:12px 16px;font-size:14px;font-weight:500;z-index:200;transform:translateY(120%);transition:transform .25s ease}
@@ -94,52 +103,108 @@ body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-hei
 .dh{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:12px;text-align:center}
 .da{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#9333ea);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin:0 auto 12px}
 .dn{font-size:20px;font-weight:700}.dc{font-size:14px;color:var(--muted);margin-top:2px}
-.trial-bar{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.2);border-radius:10px;padding:10px 14px;font-size:13px;color:#eab308;margin-bottom:12px;text-align:center}
+.trial-bar{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.2);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--yellow);margin-bottom:12px;text-align:center}
+.spin{display:inline-block;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style></head><body>
 
-<!-- ═══ LOADING ═══ -->
-<div class="auth-wrap" id="sc-loading">
-  <div style="text-align:center">
-    <div class="auth-logo">Lead<span>Capture</span> Pro</div>
-    <div style="color:var(--muted);font-size:14px;margin-top:12px">Vérification en cours...</div>
-    <div style="margin-top:20px;font-size:32px;animation:spin 1s linear infinite">⏳</div>
+<!-- ═══ SCREEN: LOGIN ═══ -->
+<div class="screen active" id="sc-login">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">Lead<span>Capture</span> Pro</div>
+      <div class="auth-icon">👋</div>
+      <div class="auth-title">Connexion</div>
+      <div class="auth-sub">Entrez votre email pour accéder à votre espace LeadCapture Pro.</div>
+      
+      <input class="inp" type="email" id="login-email" placeholder="votre@email.com" inputmode="email" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="err-msg" id="login-err"></div>
+      <button class="btn bp" id="login-btn" onclick="doLogin()">
+        <span id="login-btn-text">Accéder à mon espace →</span>
+      </button>
+      
+      <div class="divider"><span>Pas encore client ?</span></div>
+      
+      <a href="https://leadcapturepro.fr/#pricing" class="btn bs">
+        🚀 Créer mon compte
+      </a>
+    </div>
+    <div style="margin-top:16px;font-size:12px;color:var(--muted);text-align:center">
+      <a href="https://leadcapturepro.fr/cgv.html" style="color:var(--muted)">CGV</a> · LeadCapture Pro
+    </div>
   </div>
 </div>
-<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
-<!-- ═══ EXPIRED ═══ -->
-<div class="auth-wrap" id="sc-expired" style="display:none">
-  <div class="auth-card">
-    <div class="auth-logo">Lead<span>Capture</span> Pro</div>
-    <div style="height:1px;background:var(--border);margin:16px 0"></div>
-    <div class="auth-icon">😔</div>
-    <div class="auth-title">Abonnement expiré</div>
-    <div class="expired-badge">⚠️ Votre accès a expiré ou été révoqué</div>
-    <div class="auth-msg">Pour continuer à utiliser LeadCapture Pro, souscrivez à un abonnement ou contactez Olivier.</div>
-    <a href="https://leadcapturepro.fr/#pricing" class="btn bp" style="text-decoration:none;margin-bottom:10px">💳 Voir les abonnements</a>
-    <a href="mailto:olivier@oj-sales.com" class="btn bs" style="text-decoration:none">✉️ Contacter Olivier</a>
+<!-- ═══ SCREEN: COMPTE INEXISTANT ═══ -->
+<div class="screen" id="sc-unknown">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">Lead<span>Capture</span> Pro</div>
+      <div class="auth-icon">🔍</div>
+      <div class="auth-title">Aucun compte trouvé</div>
+      <div class="status-badge badge-yellow">
+        <span>⚠️</span>
+        <span>L'email <strong id="unknown-email"></strong> n'est pas associé à un compte.</span>
+      </div>
+      <div class="auth-sub">Créez votre compte pour capturer vos leads de salon en quelques secondes.</div>
+      <a href="https://leadcapturepro.fr/#pricing" class="btn bp" style="margin-bottom:10px">
+        🚀 Créer mon compte
+      </a>
+      <button class="btn bs" onclick="go('sc-login')">← Essayer un autre email</button>
+    </div>
   </div>
 </div>
 
-<!-- ═══ APP (toutes les screens) ═══ -->
+<!-- ═══ SCREEN: COMPTE INACTIF ═══ -->
+<div class="screen" id="sc-inactive">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">Lead<span>Capture</span> Pro</div>
+      <div class="auth-icon">😔</div>
+      <div class="auth-title">Abonnement inactif</div>
+      <div class="status-badge badge-red">
+        <span>🔴</span>
+        <span>Votre abonnement est suspendu ou a expiré.</span>
+      </div>
+      <div class="auth-sub">Réactivez votre abonnement pour retrouver l'accès à l'application et à tous vos leads.</div>
+      <a href="https://leadcapturepro.fr/#pricing" class="btn bp" style="margin-bottom:10px">
+        💳 Réactiver mon abonnement
+      </a>
+      <a href="mailto:olivier@oj-sales.com" class="btn bs" style="margin-bottom:10px;text-decoration:none">
+        ✉️ Contacter le support
+      </a>
+      <button class="btn bg2btn" onclick="go('sc-login')">← Changer d'email</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
 <div id="app-root" style="display:none">
 
 <div class="screen active" id="sc-home">
   <div class="topbar"><div class="logo">Lead<span>Capture</span> Pro</div><button class="ta" onclick="openMo('mc')">+ Capturer</button></div>
   <div class="cnt">
-    <div id="trial-banner" style="display:none"></div>
+    <div id="trial-banner"></div>
     <div style="margin-bottom:16px"><div style="font-size:13px;color:var(--muted)">Bonjour <span id="user-name">👋</span></div><div style="font-size:22px;font-weight:800;margin-top:2px">Salon <span id="evn">Tech Expo 2026</span></div></div>
-    <div class="sg"><div class="sk"><div class="sv" id="s1">0</div><div class="sl2">Leads capturés</div><div class="sc2" id="s2">↑ 0 aujourd'hui</div></div><div class="sk"><div class="sv" style="color:var(--orange)" id="s3">0</div><div class="sl2">Leads chauds 🔥</div><div class="sc2" id="s4">Score moy: —</div></div></div>
+    <div class="sg">
+      <div class="sk"><div class="sv" id="s1">0</div><div class="sl2">Leads capturés</div><div class="sc2" id="s2">↑ 0 aujourd'hui</div></div>
+      <div class="sk"><div class="sv" style="color:var(--orange)" id="s3">0</div><div class="sl2">Leads chauds 🔥</div><div class="sc2" id="s4">Score moy: —</div></div>
+    </div>
     <div class="qa">
       <div class="qb" onclick="simScan()"><div class="qi">📷</div><div class="ql">Scanner QR</div></div>
       <div class="qb" onclick="simNFC()"><div class="qi">📲</div><div class="ql">Tap NFC</div></div>
       <div class="qb" onclick="openMo('mc')"><div class="qi">✏️</div><div class="ql">Saisie rapide</div></div>
-      <div class="qb" onclick="go('sc-leads')"><div class="qi">📋</div><div class="ql">Mes leads</div></div>
+      <div class="qb" onclick="goApp('sc-leads')"><div class="qi">📋</div><div class="ql">Mes leads</div></div>
     </div>
-    <div class="rh"><div class="rt">Derniers leads</div><div class="rl2" onclick="go('sc-leads')">Voir tout →</div></div>
+    <div class="rh"><div class="rt">Derniers leads</div><div class="rl2" onclick="goApp('sc-leads')">Voir tout →</div></div>
     <div class="card" style="padding:0 16px" id="rl"></div>
   </div>
-  <nav class="nav"><button class="ni on" onclick="go('sc-home')"><span class="nii">🏠</span>Accueil</button><button class="ni" onclick="go('sc-leads')"><span class="nii">👥</span>Leads</button><button class="ni" onclick="go('sc-scan')"><span class="nii">📷</span>Scanner</button><button class="ni" onclick="go('sc-profile')"><span class="nii">⚙️</span>Profil</button></nav>
+  <nav class="nav">
+    <button class="ni on" onclick="goApp('sc-home')"><span class="nii">🏠</span>Accueil</button>
+    <button class="ni" onclick="goApp('sc-leads')"><span class="nii">👥</span>Leads</button>
+    <button class="ni" onclick="goApp('sc-scan')"><span class="nii">📷</span>Scanner</button>
+    <button class="ni" onclick="goApp('sc-profile')"><span class="nii">⚙️</span>Profil</button>
+  </nav>
 </div>
 
 <div class="screen" id="sc-leads">
@@ -154,7 +219,12 @@ body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-hei
     </div>
     <div id="ll"></div>
   </div>
-  <nav class="nav"><button class="ni" onclick="go('sc-home')"><span class="nii">🏠</span>Accueil</button><button class="ni on" onclick="go('sc-leads')"><span class="nii">👥</span>Leads</button><button class="ni" onclick="go('sc-scan')"><span class="nii">📷</span>Scanner</button><button class="ni" onclick="go('sc-profile')"><span class="nii">⚙️</span>Profil</button></nav>
+  <nav class="nav">
+    <button class="ni" onclick="goApp('sc-home')"><span class="nii">🏠</span>Accueil</button>
+    <button class="ni on" onclick="goApp('sc-leads')"><span class="nii">👥</span>Leads</button>
+    <button class="ni" onclick="goApp('sc-scan')"><span class="nii">📷</span>Scanner</button>
+    <button class="ni" onclick="goApp('sc-profile')"><span class="nii">⚙️</span>Profil</button>
+  </nav>
 </div>
 
 <div class="screen" id="sc-scan">
@@ -166,39 +236,50 @@ body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-hei
     <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px">
       <button class="btn bp" onclick="simScan()">📷 Simuler scan QR</button>
       <button class="btn bs" onclick="simNFC()">📲 Simuler NFC</button>
-      <button class="btn bg" onclick="openMo('mc')">✏️ Saisie manuelle</button>
+      <button class="btn bg2btn" onclick="openMo('mc')">✏️ Saisie manuelle</button>
     </div>
   </div>
-  <nav class="nav"><button class="ni" onclick="go('sc-home')"><span class="nii">🏠</span>Accueil</button><button class="ni" onclick="go('sc-leads')"><span class="nii">👥</span>Leads</button><button class="ni on" onclick="go('sc-scan')"><span class="nii">📷</span>Scanner</button><button class="ni" onclick="go('sc-profile')"><span class="nii">⚙️</span>Profil</button></nav>
+  <nav class="nav">
+    <button class="ni" onclick="goApp('sc-home')"><span class="nii">🏠</span>Accueil</button>
+    <button class="ni" onclick="goApp('sc-leads')"><span class="nii">👥</span>Leads</button>
+    <button class="ni on" onclick="goApp('sc-scan')"><span class="nii">📷</span>Scanner</button>
+    <button class="ni" onclick="goApp('sc-profile')"><span class="nii">⚙️</span>Profil</button>
+  </nav>
 </div>
 
 <div class="screen" id="sc-profile">
   <div class="topbar"><div class="logo">Lead<span>Capture</span> Pro</div></div>
   <div class="cnt">
-    <div class="ph2">
-      <div class="pa" id="prof-av">O</div>
-      <div class="pn" id="prof-name">—</div>
-      <div class="pp" id="prof-plan">⚡ Plan —</div>
-    </div>
+    <div class="ph2"><div class="pa" id="prof-av">?</div><div class="pn" id="prof-name">—</div><div class="pp" id="prof-plan">⚡ —</div></div>
     <div style="margin-bottom:12px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Salon actuel</div>
-    <div class="ml" style="margin-bottom:16px"><div class="mi" onclick="openMo('me')"><span class="mic">🎪</span><span class="mit">Événement</span><span class="miv" id="pe">Tech Expo 2026</span><span class="mia">›</span></div></div>
+    <div class="ml" style="margin-bottom:16px">
+      <div class="mi" onclick="openMo('me')"><span class="mic">🎪</span><span class="mit">Événement</span><span class="miv" id="pe">Tech Expo 2026</span><span class="mia">›</span></div>
+    </div>
     <div style="margin-bottom:12px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Mon compte</div>
     <div class="ml" style="margin-bottom:16px">
       <div class="mi"><span class="mic">📧</span><span class="mit">Email</span><span class="miv" id="prof-email">—</span></div>
       <div class="mi" onclick="xprtCSV()"><span class="mic">📤</span><span class="mit">Exporter CSV</span><span class="mia">›</span></div>
     </div>
-    <div class="ml" style="margin-bottom:16px"><div class="mi" onclick="clrAll()"><span class="mic">🗑️</span><span class="mit" style="color:var(--red)">Effacer tous les leads</span><span class="mia">›</span></div></div>
-    <button class="btn bs" onclick="doLogout()" style="margin-bottom:8px">🚪 Se déconnecter</button>
-    <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--muted)">LeadCapture Pro v1.0 · <a href="https://leadcapturepro.fr/cgv.html" style="color:var(--muted)">CGV</a></div>
+    <div class="ml" style="margin-bottom:16px">
+      <div class="mi" onclick="clrAll()"><span class="mic">🗑️</span><span class="mit" style="color:var(--red)">Effacer tous les leads</span><span class="mia">›</span></div>
+    </div>
+    <button class="btn bs" onclick="doLogout()">🚪 Se déconnecter</button>
+    <div style="text-align:center;margin-top:20px;font-size:12px;color:var(--muted)">
+      LeadCapture Pro v1.0 · <a href="https://leadcapturepro.fr/cgv.html" style="color:var(--muted)">CGV</a>
+    </div>
   </div>
-  <nav class="nav"><button class="ni" onclick="go('sc-home')"><span class="nii">🏠</span>Accueil</button><button class="ni" onclick="go('sc-leads')"><span class="nii">👥</span>Leads</button><button class="ni" onclick="go('sc-scan')"><span class="nii">📷</span>Scanner</button><button class="ni on" onclick="go('sc-profile')"><span class="nii">⚙️</span>Profil</button></nav>
+  <nav class="nav">
+    <button class="ni" onclick="goApp('sc-home')"><span class="nii">🏠</span>Accueil</button>
+    <button class="ni" onclick="goApp('sc-leads')"><span class="nii">👥</span>Leads</button>
+    <button class="ni" onclick="goApp('sc-scan')"><span class="nii">📷</span>Scanner</button>
+    <button class="ni on" onclick="goApp('sc-profile')"><span class="nii">⚙️</span>Profil</button>
+  </nav>
 </div>
 
 <div class="screen" id="sc-detail">
-  <div class="topbar"><button class="tb" onclick="go('sc-leads')">←</button><div class="tt">Détail lead</div><button class="ta" onclick="delLd()">Supprimer</button></div>
+  <div class="topbar"><button class="tb" onclick="goApp('sc-leads')">←</button><div class="tt">Détail lead</div><button class="ta" onclick="delLd()">Supprimer</button></div>
   <div class="cnt" id="dc"></div>
 </div>
-
 </div><!-- /app-root -->
 
 <!-- MODALS -->
@@ -210,131 +291,233 @@ body{background:var(--bg);color:var(--text);font-family:Geist,sans-serif;min-hei
     <div class="ig"><label class="lbl">Email *</label><input class="inp" id="cem" type="email" placeholder="jean@entreprise.com"></div>
     <div class="ig"><label class="lbl">Entreprise</label><input class="inp" id="cco" placeholder="Acme Corp"></div>
     <div class="ig"><label class="lbl">Téléphone</label><input class="inp" id="cph" type="tel" placeholder="+33 6 00 00 00 00"></div>
-    <div class="ig"><label class="lbl">Intérêt</label><input class="inp" id="cin" placeholder="Cherche CRM, budget Q3..."></div>
-    <div class="ig"><label class="lbl">Température</label><select class="inp" id="ctp"><option value="hot">🔥 Chaud</option><option value="warm" selected>🌡️ Tiède</option><option value="cold">❄️ Froid</option></select></div>
+    <div class="ig"><label class="lbl">Intérêt / Besoin</label><input class="inp" id="cin" placeholder="Cherche CRM, budget Q3..."></div>
+    <div class="ig"><label class="lbl">Température</label>
+      <select class="inp" id="ctp" style="-webkit-appearance:none">
+        <option value="hot">🔥 Chaud — rappeler cette semaine</option>
+        <option value="warm" selected>🌡️ Tiède — à suivre ce mois</option>
+        <option value="cold">❄️ Froid — nurturing long terme</option>
+      </select>
+    </div>
     <div class="ig"><label class="lbl">Notes</label><input class="inp" id="cno" placeholder="Rappeler lundi..."></div>
-    <button class="btn bp" onclick="svLd()" style="margin-top:4px">✅ Sauvegarder</button>
-    <button class="btn bg" onclick="closeMo('mc')" style="margin-top:8px">Annuler</button>
+    <button class="btn bp" onclick="svLd()" style="margin-top:4px">✅ Sauvegarder le lead</button>
+    <button class="btn bg2btn" onclick="closeMo('mc')" style="margin-top:8px">Annuler</button>
   </div>
 </div>
+
 <div class="mo" id="me" onclick="if(event.target===this)closeMo('me')">
   <div class="md">
     <div class="mh"></div><div class="mt">🎪 Nom du salon</div>
     <div class="ig"><label class="lbl">Événement</label><input class="inp" id="einp" placeholder="Ex: Viva Technology 2026"></div>
     <button class="btn bp" onclick="svEv()">Sauvegarder</button>
-    <button class="btn bg" onclick="closeMo('me')" style="margin-top:8px">Annuler</button>
+    <button class="btn bg2btn" onclick="closeMo('me')" style="margin-top:8px">Annuler</button>
   </div>
 </div>
+
 <div class="toast" id="tst"></div>
 
 <script>
 const API = 'https://leadcapturepro-production.up.railway.app';
-let leads=JSON.parse(localStorage.getItem('lcp-leads')||'[]'),flt='all',curId=null;
-let currentUser = null;
+const SITE = 'https://leadcapturepro.fr';
+let leads = JSON.parse(localStorage.getItem('lcp-leads') || '[]');
+let flt = 'all', curId = null, currentUser = null;
 
-// ═══ AUTH ═══
-async function initAuth() {
-  const params = new URLSearchParams(window.location.search);
-  const magicToken = params.get('token');
+// ═══════════════════════════════════════
+// NAVIGATION AUTH (screens globaux)
+// ═══════════════════════════════════════
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-  if (magicToken) {
-    window.history.replaceState({}, '', '/');
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 8000);
-      const r = await fetch(API + '/api/auth/verify?token=' + magicToken, { signal: controller.signal });
-      clearTimeout(timeout);
-      const d = await r.json();
-      if (r.ok && d.jwt) {
-        localStorage.setItem('lcp-jwt', d.jwt);
-        localStorage.setItem('lcp-email', d.client.email);
-        localStorage.setItem('lcp-name', d.client.name);
-        localStorage.setItem('lcp-plan', d.client.plan);
-        currentUser = d.client;
-        showApp();
-        return;
-      } else if (d.error === 'inactive' || d.error === 'trial_expired') {
-        showExpired();
-        return;
-      }
-    } catch(e) {}
-    showExpired();
+// ═══════════════════════════════════════
+// NAVIGATION APP (screens dans app-root)
+// ═══════════════════════════════════════
+function goApp(id) {
+  document.querySelectorAll('#app-root .screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'sc-home') rndrH();
+  if (id === 'sc-leads') rndrL();
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════
+// LOGIN — vérification par email
+// ═══════════════════════════════════════
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const errEl = document.getElementById('login-err');
+  const btn = document.getElementById('login-btn');
+  const btnText = document.getElementById('login-btn-text');
+  errEl.textContent = '';
+
+  if (!email || !email.includes('@')) {
+    errEl.textContent = 'Entrez un email valide';
     return;
   }
 
-  // Pas de token magique — vérifier JWT local
+  btnText.innerHTML = '<span class="spin">⏳</span> Vérification...';
+  btn.disabled = true;
+
+  try {
+    // Appeler l'API pour vérifier le statut du compte
+    const r = await fetch(API + '/api/auth/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const d = await r.json();
+
+    if (d.status === 'active_paid' || d.status === 'active_free') {
+      // Compte actif → envoyer le lien magique
+      await fetch(API + '/api/auth/send-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      showLinkSent(email);
+    } else if (d.status === 'inactive') {
+      go('sc-inactive');
+    } else {
+      // Compte inexistant
+      document.getElementById('unknown-email').textContent = email;
+      go('sc-unknown');
+    }
+  } catch(e) {
+    errEl.textContent = 'Erreur réseau, réessayez';
+  } finally {
+    btnText.textContent = 'Accéder à mon espace →';
+    btn.disabled = false;
+  }
+}
+
+function showLinkSent(email) {
+  const card = document.querySelector('#sc-login .auth-card');
+  card.innerHTML = `
+    <div class="auth-logo">Lead<span style="color:var(--orange)">Capture</span> Pro</div>
+    <div class="auth-icon">📧</div>
+    <div class="auth-title">Lien envoyé !</div>
+    <div class="auth-sub">Un lien de connexion a été envoyé à<br><strong>${email}</strong><br><br>Cliquez sur le lien dans l'email pour accéder à votre espace. Vérifiez vos spams si vous ne le voyez pas.</div>
+    <button class="btn bs" onclick="location.reload()">← Retour à la connexion</button>
+  `;
+}
+
+// ═══════════════════════════════════════
+// VÉRIFICATION TOKEN MAGIQUE (URL)
+// ═══════════════════════════════════════
+async function checkMagicToken() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  if (!token) return false;
+
+  window.history.replaceState({}, '', '/');
+
+  try {
+    const r = await fetch(API + '/api/auth/verify?token=' + token);
+    const d = await r.json();
+    if (r.ok && d.jwt) {
+      localStorage.setItem('lcp-jwt', d.jwt);
+      localStorage.setItem('lcp-email', d.client.email);
+      localStorage.setItem('lcp-name', d.client.name || '');
+      localStorage.setItem('lcp-plan', d.client.plan || 'free');
+      currentUser = d.client;
+      return true;
+    } else if (d.error === 'inactive') {
+      go('sc-inactive');
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+// ═══════════════════════════════════════
+// VÉRIFICATION JWT STOCKÉ
+// ═══════════════════════════════════════
+async function checkStoredJWT() {
   const jwt = localStorage.getItem('lcp-jwt');
   const email = localStorage.getItem('lcp-email');
+  if (!jwt || !email) return false;
 
-  // Pas de JWT → écran expiré directement, sans appel réseau
-  if (!jwt || !email) { showExpired(); return; }
-
-  // JWT présent → vérifier en ligne avec timeout
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000);
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 5000);
     const r = await fetch(API + '/api/auth/check', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, jwtToken: jwt }),
-      signal: controller.signal
+      signal: ctrl.signal
     });
-    clearTimeout(timeout);
     const d = await r.json();
     if (r.ok && d.valid) {
       currentUser = { email, name: d.name || localStorage.getItem('lcp-name'), plan: d.plan, trialEndsAt: d.trialEndsAt };
-      showApp();
-    } else {
-      // Token invalide ou révoqué
+      return true;
+    } else if (d.error === 'inactive' || d.error === 'trial_expired') {
       localStorage.removeItem('lcp-jwt');
       localStorage.removeItem('lcp-email');
-      showExpired();
+      go('sc-inactive');
+      return true;
     }
+    localStorage.removeItem('lcp-jwt');
+    localStorage.removeItem('lcp-email');
+    return false;
   } catch(e) {
-    // Réseau indisponible → mode offline si JWT existe
+    // Offline → mode dégradé avec JWT local
     currentUser = {
       email,
       name: localStorage.getItem('lcp-name') || email,
       plan: localStorage.getItem('lcp-plan') || 'free'
     };
-    showApp();
+    return true;
   }
+}
+
+// ═══════════════════════════════════════
+// INIT — point d'entrée
+// ═══════════════════════════════════════
+async function init() {
+  // 1. Token magique dans l'URL ?
+  const hasMagic = await checkMagicToken();
+  if (hasMagic && currentUser) { showApp(); return; }
+  if (hasMagic) return; // déjà redirigé vers sc-inactive
+
+  // 2. JWT en localStorage ?
+  const hasJWT = await checkStoredJWT();
+  if (hasJWT && currentUser) { showApp(); return; }
+  if (hasJWT) return; // déjà redirigé
+
+  // 3. Rien → écran login
+  go('sc-login');
 }
 
 function showApp() {
-  document.getElementById('sc-loading').style.display = 'none';
-  document.getElementById('sc-expired').style.display = 'none';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('app-root').style.display = 'block';
+  document.getElementById('sc-home').classList.add('active');
 
-  // Mettre à jour le profil
+  // Profil
   if (currentUser) {
     const name = currentUser.name || currentUser.email || '';
-    document.getElementById('user-name').textContent = (name.split(' ')[0] || '') + ' 👋';
-    document.getElementById('prof-name').textContent = name;
+    const first = name.split(' ')[0] || name;
+    document.getElementById('user-name').textContent = first + ' 👋';
+    document.getElementById('prof-name').textContent = name || currentUser.email;
     document.getElementById('prof-email').textContent = currentUser.email || '';
     document.getElementById('prof-av').textContent = (name[0] || 'U').toUpperCase();
-    document.getElementById('prof-plan').textContent = '⚡ Plan ' + (currentUser.plan || 'Free');
-
-    // Afficher bannière trial si applicable
+    const planLabels = { solo: '⚡ Plan Solo', pro: '🚀 Plan Pro', business: '💎 Plan Business', free: '🆓 Accès gratuit' };
+    document.getElementById('prof-plan').textContent = planLabels[currentUser.plan] || '⚡ ' + (currentUser.plan || 'Pro');
+    
+    // Bannière trial
     if (currentUser.trialEndsAt) {
-      const daysLeft = Math.ceil((new Date(currentUser.trialEndsAt) - Date.now()) / 86400000);
-      if (daysLeft > 0 && daysLeft <= 7) {
-        const b = document.getElementById('trial-banner');
-        b.style.display = 'block';
-        b.innerHTML = '<div class="trial-bar">⏱ Accès gratuit — expire dans ' + daysLeft + ' jour(s)</div>';
+      const days = Math.ceil((new Date(currentUser.trialEndsAt) - Date.now()) / 86400000);
+      if (days > 0 && days <= 7) {
+        document.getElementById('trial-banner').innerHTML = '<div class="trial-bar">⏱ Accès gratuit — expire dans ' + days + ' jour(s)</div>';
       }
     }
   }
-  rndrH();
-  const ev = localStorage.getItem('lcp-ev') || 'Tech Expo 2026';
-  document.getElementById('pe').textContent = ev;
-  document.getElementById('evn').textContent = ev;
-}
 
-function showExpired() {
-  document.getElementById('sc-loading').style.display = 'none';
-  document.getElementById('app-root').style.display = 'none';
-  document.getElementById('sc-expired').style.display = 'flex';
+  const ev = localStorage.getItem('lcp-ev') || 'Tech Expo 2026';
+  document.getElementById('evn').textContent = ev;
+  document.getElementById('pe').textContent = ev;
+  rndrH();
 }
 
 function doLogout() {
@@ -343,16 +526,20 @@ function doLogout() {
   localStorage.removeItem('lcp-email');
   localStorage.removeItem('lcp-name');
   localStorage.removeItem('lcp-plan');
-  showExpired();
+  currentUser = null;
+  document.getElementById('app-root').style.display = 'none';
+  go('sc-login');
+  document.getElementById('login-email').value = '';
 }
 
-// ═══ APP LOGIC ═══
-function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='sc-home')rndrH();if(id==='sc-leads')rndrL();window.scrollTo(0,0)}
+// ═══════════════════════════════════════
+// APP LOGIC
+// ═══════════════════════════════════════
 function openMo(id){document.getElementById(id).classList.add('open');if(id==='me')document.getElementById('einp').value=localStorage.getItem('lcp-ev')||'Tech Expo 2026'}
 function closeMo(id){document.getElementById(id).classList.remove('open')}
 function toast(m){const t=document.getElementById('tst');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
 function sc(l){let s=50;if(l.email)s+=15;if(l.phone)s+=10;if(l.company)s+=8;if(l.interest&&l.interest.length>10)s+=12;if(l.temp==='hot')s+=15;else if(l.temp==='cold')s-=15;if(l.notes&&l.notes.length>5)s+=8;return Math.min(99,Math.max(10,s))}
-function cls(s){return s>=70?'sh':s>=45?'sw':'sl'}
+function cls(s){return s>=70?'shb':s>=45?'swb':'slb'}
 function gt(s){return s>=70?'hot':s>=45?'warm':'cold'}
 function av2(l){return((l.fn||'?')[0]+(l.ln||'?')[0]).toUpperCase()}
 function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return"à l'instant";if(s<3600)return~~(s/60)+'min';if(s<86400)return~~(s/3600)+'h';return~~(s/86400)+'j'}
@@ -365,7 +552,7 @@ function svLd(){
   document.getElementById('ctp').value='warm';closeMo('mc');toast('✅ Lead sauvegardé ! Score IA: '+l.score+'/100');rndrH();rndrL()
 }
 function sv(){localStorage.setItem('lcp-leads',JSON.stringify(leads))}
-function liH(l){const c=cls(l.score);return '<div class="li" onclick="dtl(\''+l.id+'\')"><div class="av">'+av2(l)+'</div><div class="li-i"><div class="li-n">'+l.fn+' '+l.ln+'</div><div class="li-c">'+(l.company||l.email)+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="sc '+c+'">'+l.score+'</div><div class="li-t">'+ago(l.at)+'</div></div></div>'}
+function liH(l){const c=cls(l.score);return '<div class="li" onclick="dtl(\''+l.id+'\')"><div class="av">'+av2(l)+'</div><div class="li-i"><div class="li-n">'+l.fn+' '+l.ln+'</div><div class="li-c">'+(l.company||l.email)+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="sc-badge '+c+'">'+l.score+'</div><div class="li-t">'+ago(l.at)+'</div></div></div>'}
 function rndrH(){
   const ev=localStorage.getItem('lcp-ev')||'Tech Expo 2026';
   document.getElementById('evn').textContent=ev;
@@ -375,8 +562,8 @@ function rndrH(){
   document.getElementById('s1').textContent=tot;document.getElementById('s3').textContent=hot;
   document.getElementById('s2').textContent='↑ '+td+" aujourd'hui";
   document.getElementById('s4').textContent=tot?'Score moy: '+avg+'/100':'Score moy: —';
-  const el=document.getElementById('rl');const rec=leads.slice(0,5);
-  el.innerHTML=rec.length?rec.map(liH).join(''):'<div class="em" style="padding:24px"><div class="ei">🎯</div><div class="et">Aucun lead encore</div><div style="font-size:13px;margin-top:4px">Capturez votre premier lead !</div></div>'
+  const el=document.getElementById('rl');
+  el.innerHTML=leads.slice(0,5).length?leads.slice(0,5).map(liH).join(''):'<div class="em" style="padding:24px"><div class="ei">🎯</div><div class="et">Aucun lead encore</div><div style="font-size:13px;margin-top:4px">Capturez votre premier lead !</div></div>'
 }
 function setFlt(f){flt=f;['all','hot','warm','cold'].forEach((k,i)=>{const ids=['fa','fh','fw','fc'];document.getElementById(ids[i]).className='btn bsm '+(k===f?'bp':'bs')});rndrL()}
 function rndrL(){
@@ -388,18 +575,18 @@ function rndrL(){
 }
 function dtl(id){
   const l=leads.find(x=>x.id===id);if(!l)return;curId=id;
-  const c=cls(l.score),col=c==='sh'?'var(--orange)':c==='sw'?'#eab308':'var(--blue)';
-  const lbl=c==='sh'?'🔥 Chaud':c==='sw'?'🌡️ Tiède':'❄️ Froid';
-  document.getElementById('dc').innerHTML='<div class="dh"><div class="da">'+av2(l)+'</div><div class="dn">'+l.fn+' '+l.ln+'</div><div class="dc">'+(l.company||'')+'</div><div style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:12px"><div class="sc '+c+'" style="width:52px;height:52px;font-size:16px">'+l.score+'</div><div><div style="font-size:11px;color:var(--muted)">Score IA</div><div style="font-size:13px;font-weight:700;color:'+col+'">'+lbl+'</div></div></div></div><div class="card">'+(l.email?'<div class="ir"><div class="iri">✉️</div><div class="irv">'+l.email+'</div></div>':'')+(l.phone?'<div class="ir"><div class="iri">📞</div><div class="irv">'+l.phone+'</div></div>':'')+(l.company?'<div class="ir"><div class="iri">🏢</div><div class="irv">'+l.company+'</div></div>':'')+(l.interest?'<div class="ir"><div class="iri">💡</div><div class="irv">'+l.interest+'</div></div>':'')+(l.notes?'<div class="ir"><div class="iri">📝</div><div class="irv">'+l.notes+'</div></div>':'')+'<div class="ir"><div class="iri">🎪</div><div class="irv">'+l.event+'</div></div><div class="ir"><div class="iri">🕐</div><div class="irv">'+new Date(l.at).toLocaleString('fr-FR')+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><a href="mailto:'+l.email+'" class="btn bs" style="text-decoration:none">✉️ Email</a>'+(l.phone?'<a href="tel:'+l.phone+'" class="btn bs" style="text-decoration:none">📞 Appeler</a>':'<div></div>')+'</div>';
-  go('sc-detail')
+  const c=cls(l.score),col=c==='shb'?'var(--orange)':c==='swb'?'#eab308':'var(--blue)';
+  const lbl=c==='shb'?'🔥 Chaud':c==='swb'?'🌡️ Tiède':'❄️ Froid';
+  document.getElementById('dc').innerHTML='<div class="dh"><div class="da">'+av2(l)+'</div><div class="dn">'+l.fn+' '+l.ln+'</div><div class="dc">'+(l.company||'')+'</div><div style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:12px"><div class="sc-badge '+c+'" style="width:52px;height:52px;font-size:16px">'+l.score+'</div><div><div style="font-size:11px;color:var(--muted)">Score IA</div><div style="font-size:13px;font-weight:700;color:'+col+'">'+lbl+'</div></div></div></div><div class="card">'+(l.email?'<div class="ir"><div class="iri">✉️</div><div class="irv">'+l.email+'</div></div>':'')+(l.phone?'<div class="ir"><div class="iri">📞</div><div class="irv">'+l.phone+'</div></div>':'')+(l.company?'<div class="ir"><div class="iri">🏢</div><div class="irv">'+l.company+'</div></div>':'')+(l.interest?'<div class="ir"><div class="iri">💡</div><div class="irv">'+l.interest+'</div></div>':'')+(l.notes?'<div class="ir"><div class="iri">📝</div><div class="irv">'+l.notes+'</div></div>':'')+'<div class="ir"><div class="iri">🎪</div><div class="irv">'+l.event+'</div></div><div class="ir"><div class="iri">🕐</div><div class="irv">'+new Date(l.at).toLocaleString('fr-FR')+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><a href="mailto:'+l.email+'" class="btn bs" style="text-decoration:none">✉️ Email</a>'+(l.phone?'<a href="tel:'+l.phone+'" class="btn bs" style="text-decoration:none">📞 Appeler</a>':'<div></div>')+'</div>';
+  goApp('sc-detail')
 }
-function delLd(){if(!curId||!confirm('Supprimer ?'))return;leads=leads.filter(l=>l.id!==curId);sv();toast('🗑️ Lead supprimé');go('sc-leads')}
+function delLd(){if(!curId||!confirm('Supprimer ?'))return;leads=leads.filter(l=>l.id!==curId);sv();toast('🗑️ Lead supprimé');goApp('sc-leads')}
 const DEMO=[
-  {fn:'Marie',ln:'Bernard',em:'m.bernard@solutionspro.fr',co:'Solutions Pro',ph:'+33 6 11 22 33 44',int:'CRM pour équipe de 12, budget validé',tp:'hot',no:'RDV semaine prochaine'},
-  {fn:'Thomas',ln:'Martin',em:'t.martin@innotech.com',co:'InnoTech',ph:'+33 7 55 44 33 22',int:'Intéressé par NFC',tp:'warm',no:'Rappeler en septembre'},
-  {fn:'Sophie',ln:'Leclerc',em:'sophie@startup.io',co:'Startup.io',ph:'',int:'Découverte produit',tp:'cold',no:''},
-  {fn:'Pierre',ln:'Dubois',em:'p.dubois@grandgroupe.fr',co:'Grand Groupe SA',ph:'+33 6 88 77 66 55',int:'Pilote 50 commerciaux Q4',tp:'hot',no:'Contacter DSI'},
-  {fn:'Julie',ln:'Petit',em:'j.petit@agence.com',co:'Agence Digital',ph:'+33 6 33 44 55 66',int:'Pour clients évènementiels',tp:'warm',no:'Envoyer doc tarifaire'},
+  {fn:'Marie',ln:'Bernard',em:'m.bernard@solutionspro.fr',co:'Solutions Pro',ph:'+33 6 11 22 33 44',int:'CRM pour équipe de 12 commerciaux, budget validé',tp:'hot',no:'RDV semaine prochaine'},
+  {fn:'Thomas',ln:'Martin',em:'t.martin@innotech.com',co:'InnoTech',ph:'+33 7 55 44 33 22',int:'Intéressé par NFC, salon annuel en octobre',tp:'warm',no:'Rappeler en septembre'},
+  {fn:'Sophie',ln:'Leclerc',em:'sophie@startup.io',co:'Startup.io',ph:'',int:'Découverte produit, early stage',tp:'cold',no:''},
+  {fn:'Pierre',ln:'Dubois',em:'p.dubois@grandgroupe.fr',co:'Grand Groupe SA',ph:'+33 6 88 77 66 55',int:'Pilote sur 50 commerciaux possible Q4',tp:'hot',no:'Contacter DSI'},
+  {fn:'Julie',ln:'Petit',em:'j.petit@agence.com',co:'Agence Digital',ph:'+33 6 33 44 55 66',int:'Pour clients événementiels',tp:'warm',no:'Envoyer doc tarifaire'},
 ];
 let di=0;
 function simScan(){const c=DEMO[di%5];di++;document.getElementById('cfn').value=c.fn;document.getElementById('cln').value=c.ln;document.getElementById('cem').value=c.em;document.getElementById('cco').value=c.co;document.getElementById('cph').value=c.ph;document.getElementById('cin').value=c.int;document.getElementById('ctp').value=c.tp;document.getElementById('cno').value=c.no;toast('📷 QR scanné ! Vérifiez et sauvegardez.');openMo('mc')}
@@ -409,7 +596,9 @@ function xprtCSV(){if(!leads.length){toast('⚠️ Aucun lead');return}const h='
 ')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='leads-'+Date.now()+'.csv';a.click();toast('📤 CSV exporté !')}
 function clrAll(){if(!confirm('Effacer TOUS les leads ?'))return;leads=[];sv();toast('🗑️ Leads effacés');rndrH();rndrL()}
 
-// ═══ INIT ═══
-initAuth();
+// ═══════════════════════════════════════
+// DÉMARRAGE
+// ═══════════════════════════════════════
+init();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script></body></html>
