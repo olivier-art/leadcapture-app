@@ -1,4 +1,4 @@
-const CACHE = 'lcp-v1';
+const CACHE = 'lcp-v3';
 const ASSETS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
