@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeadCapture Pro — Admin</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#08090d;--bg2:#0f1117;--bg3:#161820;--border:#1e2130;
+    --orange:#f97316;--orange-d:#ea580c;
+    --text:#f0f1f5;--muted:#9ca3af;--muted2:#4b5563;
+    --green:#22c55e;--red:#ef4444;--yellow:#eab308;--blue:#3b82f6;
+    --radius:12px;
+  }
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+  
+  /* LOGIN */
+  #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+  .login-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:48px 40px;width:100%;max-width:400px;text-align:center}
+  .login-logo{font-size:48px;margin-bottom:16px}
+  .login-title{font-size:24px;font-weight:800;color:var(--orange);margin-bottom:4px}
+  .login-sub{color:var(--muted);font-size:14px;margin-bottom:32px}
+  .inp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-size:15px;outline:none;transition:border .2s}
+  .inp:focus{border-color:var(--orange)}
+  .btn-main{width:100%;background:var(--orange);border:none;border-radius:10px;padding:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px;transition:background .2s}
+  .btn-main:hover{background:var(--orange-d)}
+  .err{background:#1f0a0a;border:1px solid #7f1d1d;border-radius:8px;padding:10px 14px;color:#fca5a5;font-size:13px;margin-top:12px;display:none}
+
+  /* APP */
+  #app{display:none}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;display:flex;flex-direction:column}
+  .sidebar-logo{padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:16px}
+  .sidebar-logo-title{font-size:16px;font-weight:800;color:var(--orange)}
+  .sidebar-logo-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--muted);font-size:14px;cursor:pointer;transition:all .15s;border-radius:0}
+  .nav-item:hover,.nav-item.active{background:rgba(249,115,22,.1);color:var(--orange)}
+  .nav-item .icon{font-size:16px;width:20px;text-align:center}
+  .sidebar-bottom{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border)}
+  .logout-btn{width:100%;background:transparent;border:1px solid var(--border);border-radius:8px;padding:9px;color:var(--muted);font-size:13px;cursor:pointer;transition:all .15s}
+  .logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+  .main{margin-left:220px;padding:32px;min-height:100vh}
+  .page{display:none}
+  .page.active{display:block}
+  .page-title{font-size:24px;font-weight:700;margin-bottom:4px}
+  .page-sub{color:var(--muted);font-size:14px;margin-bottom:28px}
+
+  /* STATS CARDS */
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+  .stat-label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+  .stat-val{font-size:28px;font-weight:800;color:var(--text)}
+  .stat-sub{font-size:12px;color:var(--muted);margin-top:4px}
+  .stat-card.orange .stat-val{color:var(--orange)}
+  .stat-card.green .stat-val{color:var(--green)}
+
+  /* TABLE */
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  .card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .card-title{font-size:15px;font-weight:600}
+  table{width:100%;border-collapse:collapse}
+  th{padding:11px 16px;text-align:left;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border)}
+  td{padding:13px 16px;font-size:14px;border-bottom:1px solid rgba(30,33,48,.6)}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+  .badge.active_paid{background:rgba(34,197,94,.15);color:var(--green)}
+  .badge.active_free{background:rgba(59,130,246,.15);color:var(--blue)}
+  .badge.inactive{background:rgba(239,68,68,.15);color:var(--red)}
+  .badge.unknown{background:rgba(107,114,128,.15);color:var(--muted)}
+  .badge.solo{background:rgba(249,115,22,.1);color:var(--orange)}
+  .badge.pro{background:rgba(139,92,246,.15);color:#a78bfa}
+  .badge.business{background:rgba(234,179,8,.15);color:var(--yellow)}
+
+  /* ACTIONS */
+  .btn{border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+  .btn-sm{padding:5px 10px;font-size:11px}
+  .btn-orange{background:var(--orange);color:#fff}
+  .btn-orange:hover{background:var(--orange-d)}
+  .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+  .btn-ghost:hover{border-color:var(--muted);color:var(--text)}
+  .btn-red{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+  .btn-red:hover{background:rgba(239,68,68,.25)}
+  .btn-green{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+  .btn-green:hover{background:rgba(34,197,94,.25)}
+
+  .actions-row{display:flex;gap:6px;align-items:center}
+
+  /* MODAL */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-bg.open{display:flex}
+  .modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:32px;width:100%;max-width:480px}
+  .modal-title{font-size:18px;font-weight:700;margin-bottom:20px}
+  .form-group{margin-bottom:16px}
+  .form-label{font-size:13px;color:var(--muted);margin-bottom:6px;display:block}
+  select.inp{cursor:pointer}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .modal-actions{display:flex;gap:10px;margin-top:24px;justify-content:flex-end}
+
+  /* TOAST */
+  #toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:14px;z-index:200;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none}
+  #toast.show{opacity:1;transform:translateY(0)}
+
+  /* SEARCH */
+  .search-bar{display:flex;gap:10px;align-items:center;margin-bottom:20px}
+  .search-inp{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none}
+  .search-inp:focus{border-color:var(--orange)}
+
+  /* EMPTY */
+  .empty{padding:48px;text-align:center;color:var(--muted)}
+  .empty-icon{font-size:40px;margin-bottom:12px}
+
+  /* INVITE FORM */
+  .invite-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:24px}
+  .invite-title{font-size:15px;font-weight:600;margin-bottom:16px}
+  .invite-grid{display:grid;grid-template-columns:1fr 1fr 150px 150px auto;gap:12px;align-items:end}
+
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    .sidebar{width:64px}.sidebar-logo-title,.sidebar-logo-sub,.nav-item span{display:none}
+    .main{margin-left:64px;padding:20px}
+    .stats-grid{grid-template-columns:1fr 1fr}
+    .invite-grid{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🐙</div>
+    <div class="login-title">LeadCapture Pro</div>
+    <div class="login-sub">Back-office administrateur</div>
+    <input class="inp" type="password" id="secret-inp" placeholder="Mot de passe admin" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn-main" onclick="login()">Connexion</button>
+    <div class="err" id="login-err">Mot de passe incorrect</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div style="font-size:24px">🐙</div>
+      <div class="sidebar-logo-title">LCP Admin</div>
+      <div class="sidebar-logo-sub">v1.0</div>
+    </div>
+    <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+      <span class="icon">📊</span><span>Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="showPage('clients')" id="nav-clients">
+      <span class="icon">👥</span><span>Clients</span>
+    </div>
+    <div class="nav-item" onclick="showPage('invite')" id="nav-invite">
+      <span class="icon">➕</span><span>Inviter</span>
+    </div>
+    <div class="sidebar-bottom">
+      <button class="logout-btn" onclick="logout()">🚪 Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-title">Dashboard</div>
+      <div class="page-sub">Vue d'ensemble de vos clients</div>
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card orange"><div class="stat-label">Total clients</div><div class="stat-val" id="s-total">—</div></div>
+        <div class="stat-card green"><div class="stat-label">Actifs payants</div><div class="stat-val" id="s-paid">—</div></div>
+        <div class="stat-card"><div class="stat-label">Accès gratuits</div><div class="stat-val" id="s-free">—</div></div>
+        <div class="stat-card"><div class="stat-label">Inactifs</div><div class="stat-val" id="s-inactive">—</div><div class="stat-sub">comptes désactivés</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Derniers clients</span><button class="btn btn-orange btn-sm" onclick="showPage('clients')">Voir tout</button></div>
+        <table>
+          <thead><tr><th>Client</th><th>Plan</th><th>Statut</th><th>Inscription</th><th>Actions</th></tr></thead>
+          <tbody id="recent-table"><tr><td colspan="5" class="empty">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="page" id="page-clients">
+      <div class="page-title">Gestion des clients</div>
+      <div class="page-sub">Liste complète de tous les accès</div>
+      <div class="search-bar">
+        <input class="search-inp" id="search" type="text" placeholder="🔍 Rechercher par email ou nom..." oninput="renderClients()">
+        <button class="btn btn-orange" onclick="openInviteModal()">➕ Nouvel accès</button>
+        <button class="btn btn-ghost" onclick="loadClients()">↺ Actualiser</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Client</th><th>Plan</th><th>Statut</th><th>Inscription</th><th>Expire</th><th>Actions</th></tr></thead>
+          <tbody id="clients-table"><tr><td colspan="6" class="empty">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- INVITE -->
+    <div class="page" id="page-invite">
+      <div class="page-title">Inviter un client</div>
+      <div class="page-sub">Créer un accès gratuit ou d'essai</div>
+      <div class="card" style="padding:28px;max-width:540px">
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input class="inp" type="email" id="inv-email" placeholder="client@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nom</label>
+          <input class="inp" type="text" id="inv-name" placeholder="Prénom Nom">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Plan</label>
+            <select class="inp" id="inv-plan">
+              <option value="free">Accès gratuit</option>
+              <option value="solo">Solo</option>
+              <option value="pro">Pro</option>
+              <option value="business">Business</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Durée (jours, 0 = illimité)</label>
+            <input class="inp" type="number" id="inv-days" value="0" min="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes internes</label>
+          <input class="inp" type="text" id="inv-notes" placeholder="Ex: Contact salon Paris, démo...">
+        </div>
+        <button class="btn btn-main" onclick="sendInvite()" style="width:100%;margin-top:8px">
+          📧 Envoyer l'invitation
+        </button>
+        <div id="invite-result" style="margin-top:12px;display:none"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL EDIT CLIENT -->
+<div class="modal-bg" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">✏️ Modifier l'accès</div>
+    <input type="hidden" id="edit-email-hidden">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Statut</label>
+        <select class="inp" id="edit-status">
+          <option value="active_paid">Actif payant</option>
+          <option value="active_free">Actif gratuit</option>
+          <option value="inactive">Inactif</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Plan</label>
+        <select class="inp" id="edit-plan">
+          <option value="free">Gratuit</option>
+          <option value="solo">Solo</option>
+          <option value="pro">Pro</option>
+          <option value="business">Business</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('edit-modal')">Annuler</button>
+      <button class="btn btn-orange" onclick="saveEdit()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL INVITE (depuis clients) -->
+<div class="modal-bg" id="invite-modal">
+  <div class="modal">
+    <div class="modal-title">➕ Nouvel accès</div>
+    <div class="form-group">
+      <label class="form-label">Email *</label>
+      <input class="inp" type="email" id="m-email" placeholder="client@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nom</label>
+      <input class="inp" type="text" id="m-name" placeholder="Prénom Nom">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Plan</label>
+        <select class="inp" id="m-plan">
+          <option value="free">Gratuit</option>
+          <option value="solo">Solo</option>
+          <option value="pro">Pro</option>
+          <option value="business">Business</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Durée (jours, 0 = illimité)</label>
+        <input class="inp" type="number" id="m-days" value="0" min="0">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('invite-modal')">Annuler</button>
+      <button class="btn btn-orange" onclick="sendInviteModal()">📧 Envoyer</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = 'https://leadcapturepro-production.up.railway.app';
+let ADMIN_SECRET = '';
+let allClients = [];
+
+function login() {
+  const secret = document.getElementById('secret-inp').value.trim();
+  if (!secret) return;
+  ADMIN_SECRET = secret;
+  fetch(API + '/api/auth/clients', { headers: { 'x-admin-secret': secret } })
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById('login-err').style.display = 'block';
+        ADMIN_SECRET = '';
+      } else {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        localStorage.setItem('lcp_admin_secret', secret);
+        allClients = data;
+        renderStats(data);
+        renderRecentTable(data.slice(0, 5));
+      }
+    })
+    .catch(() => { document.getElementById('login-err').style.display = 'block'; });
+}
+
+function logout() {
+  localStorage.removeItem('lcp_admin_secret');
+  ADMIN_SECRET = '';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('secret-inp').value = '';
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+  if (id === 'clients') loadClients();
+  if (id === 'dashboard') loadDashboard();
+}
+
+function loadDashboard() {
+  fetch(API + '/api/auth/clients', { headers: { 'x-admin-secret': ADMIN_SECRET } })
+    .then(r => r.json())
+    .then(data => { allClients = data; renderStats(data); renderRecentTable(data.slice(0, 5)); });
+}
+
+function loadClients() {
+  document.getElementById('clients-table').innerHTML = '<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--muted)">Chargement...</td></tr>';
+  fetch(API + '/api/auth/clients', { headers: { 'x-admin-secret': ADMIN_SECRET } })
+    .then(r => r.json())
+    .then(data => { allClients = data; renderClients(); })
+    .catch(() => toast('❌ Erreur de chargement'));
+}
+
+function renderStats(clients) {
+  const paid = clients.filter(c => c.status === 'active_paid').length;
+  const free = clients.filter(c => c.status === 'active_free').length;
+  const inactive = clients.filter(c => c.status === 'inactive').length;
+  document.getElementById('s-total').textContent = clients.length;
+  document.getElementById('s-paid').textContent = paid;
+  document.getElementById('s-free').textContent = free;
+  document.getElementById('s-inactive').textContent = inactive;
+}
+
+function renderRecentTable(clients) {
+  const tb = document.getElementById('recent-table');
+  if (!clients.length) { tb.innerHTML = '<tr><td colspan="5" class="empty"><div class="empty-icon">👥</div>Aucun client</td></tr>'; return; }
+  tb.innerHTML = clients.map(c => `
+    <tr>
+      <td><div style="font-weight:600">${c.name || '—'}</div><div style="color:var(--muted);font-size:12px">${c.email}</div></td>
+      <td><span class="badge ${c.plan||'free'}">${c.planName||c.plan||'—'}</span></td>
+      <td><span class="badge ${c.status||'unknown'}">${statusLabel(c.status)}</span></td>
+      <td style="color:var(--muted);font-size:13px">${fmtDate(c.createdAt)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="sendMagicLink('${c.email}')">📧 Lien</button></td>
+    </tr>`).join('');
+}
+
+function renderClients() {
+  const q = (document.getElementById('search')?.value || '').toLowerCase();
+  let list = allClients;
+  if (q) list = list.filter(c => (c.email + ' ' + (c.name || '')).toLowerCase().includes(q));
+  const tb = document.getElementById('clients-table');
+  if (!list.length) { tb.innerHTML = '<tr><td colspan="6" class="empty"><div class="empty-icon">🔍</div>Aucun résultat</td></tr>'; return; }
+  tb.innerHTML = list.map(c => `
+    <tr>
+      <td><div style="font-weight:600">${c.name || '—'}</div><div style="color:var(--muted);font-size:12px">${c.email}</div></td>
+      <td><span class="badge ${c.plan||'free'}">${c.planName||c.plan||'—'}</span></td>
+      <td><span class="badge ${c.status||'unknown'}">${statusLabel(c.status)}</span></td>
+      <td style="color:var(--muted);font-size:13px">${fmtDate(c.createdAt)}</td>
+      <td style="color:var(--muted);font-size:13px">${c.trialEndsAt ? fmtDate(c.trialEndsAt) : '—'}</td>
+      <td>
+        <div class="actions-row">
+          <button class="btn btn-ghost btn-sm" onclick="sendMagicLink('${c.email}')" title="Envoyer lien magique">📧</button>
+          <button class="btn btn-ghost btn-sm" onclick="openEditModal('${c.email}','${c.status}','${c.plan||'free'}')" title="Modifier">✏️</button>
+          ${c.status === 'inactive'
+            ? `<button class="btn btn-green btn-sm" onclick="activateClient('${c.email}','${c.plan||'free'}')">✅ Activer</button>`
+            : `<button class="btn btn-red btn-sm" onclick="revokeClient('${c.email}')">🚫 Désact.</button>`}
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function statusLabel(s) {
+  return {active_paid:'Payant',active_free:'Gratuit',inactive:'Inactif'}[s] || s || '?';
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'2-digit'}); }
+  catch { return '—'; }
+}
+
+function sendMagicLink(email) {
+  if (!confirm('Envoyer un lien magique à ' + email + ' ?')) return;
+  fetch(API + '/api/auth/send-link', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, adminSecret: ADMIN_SECRET })
+  }).then(r => r.json()).then(d => {
+    if (d.success) toast('✅ Lien envoyé à ' + email);
+    else toast('❌ ' + (d.error || 'Erreur'));
+  }).catch(() => toast('❌ Erreur réseau'));
+}
+
+function openEditModal(email, status, plan) {
+  document.getElementById('edit-email-hidden').value = email;
+  document.getElementById('edit-status').value = status || 'active_free';
+  document.getElementById('edit-plan').value = plan || 'free';
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function saveEdit() {
+  const email = document.getElementById('edit-email-hidden').value;
+  const status = document.getElementById('edit-status').value;
+  const plan = document.getElementById('edit-plan').value;
+  fetch(API + '/api/auth/activate', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, status, plan, adminSecret: ADMIN_SECRET })
+  }).then(r => r.json()).then(d => {
+    closeModal('edit-modal');
+    if (d.success) { toast('✅ Client mis à jour'); loadClients(); }
+    else toast('❌ ' + (d.error || 'Erreur'));
+  });
+}
+
+function revokeClient(email) {
+  if (!confirm('Désactiver l\'accès de ' + email + ' ?')) return;
+  fetch(API + '/api/auth/revoke', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, adminSecret: ADMIN_SECRET })
+  }).then(r => r.json()).then(d => {
+    if (d.success) { toast('🚫 Accès révoqué'); loadClients(); loadDashboard(); }
+    else toast('❌ ' + (d.error || 'Erreur'));
+  });
+}
+
+function activateClient(email, plan) {
+  fetch(API + '/api/auth/activate', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, status: 'active_free', plan, adminSecret: ADMIN_SECRET })
+  }).then(r => r.json()).then(d => {
+    if (d.success) { toast('✅ Compte réactivé'); loadClients(); }
+    else toast('❌ ' + (d.error || 'Erreur'));
+  });
+}
+
+function sendInvite() {
+  const email = document.getElementById('inv-email').value.trim();
+  const name = document.getElementById('inv-name').value.trim();
+  const plan = document.getElementById('inv-plan').value;
+  const trialDays = parseInt(document.getElementById('inv-days').value) || 0;
+  const notes = document.getElementById('inv-notes').value.trim();
+  if (!email) { toast('⚠️ Email requis'); return; }
+  const res = document.getElementById('invite-result');
+  res.style.display = 'block';
+  res.innerHTML = '<span style="color:var(--muted)">Envoi en cours...</span>';
+  fetch(API + '/api/auth/invite', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, name, plan, trialDays, notes, adminSecret: ADMIN_SECRET })
+  }).then(r => r.json()).then(d => {
+    if (d.success) {
+      res.innerHTML = '<span style="color:var(--green)">✅ Invitation envoyée à ' + email + ' !</span>';
+      toast('✅ Invitation envoyée');
+      ['inv-email','inv-name','inv-notes'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('inv-days').value = '0';
+    } else {
+      res.innerHTML = '<span style="color:var(--red)">❌ ' + (d.error || 'Erreur') + '</span>';
+    }
+  }).catch(() => { res.innerHTML = '<span style="color:var(--red)">❌ Erreur réseau</span>'; });
+}
+
+function openInviteModal() { document.getElementById('invite-modal').classList.add('open'); }
+function sendInviteModal() {
+  const email = document.getElementById('m-email').value.trim();
+  const name = document.getElementById('m-name').value.trim();
+  const plan = document.getElementById('m-plan').value;
+  const trialDays = parseInt(document.getElementById('m-days').value) || 0;
+  if (!email) { toast('⚠️ Email requis'); return; }
+  fetch(API + '/api/auth/invite', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, name, plan, trialDays, adminSecret: ADMIN_SECRET })
+  }).then(r => r.json()).then(d => {
+    closeModal('invite-modal');
+    if (d.success) { toast('✅ Invitation envoyée'); loadClients(); }
+    else toast('❌ ' + (d.error || 'Erreur'));
+  });
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); }));
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Auto-login si secret sauvegardé
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('lcp_admin_secret');
+  if (saved) { document.getElementById('secret-inp').value = saved; login(); }
+});
+</script>
+</body>
+</html>
