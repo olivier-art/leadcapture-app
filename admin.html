@@ -133,8 +133,8 @@
     <div class="login-logo">🐙</div>
     <div class="login-title">LeadCapture Pro</div>
     <div class="login-sub">Back-office administrateur</div>
-    <input class="inp" type="password" id="secret-inp" placeholder="Mot de passe admin" onkeydown="if(event.key==='Enter')login()">
-    <button class="btn-main" onclick="login()">Connexion</button>
+    <input class="inp" type="password" id="secret-inp" placeholder="Mot de passe admin">
+    <button class="btn-main" id="login-btn" type="button">Connexion</button>
     <div class="err" id="login-err">Mot de passe incorrect</div>
   </div>
 </div>
@@ -531,6 +531,14 @@ function toast(msg) {
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('lcp_admin_secret');
   if (saved) { document.getElementById('secret-inp').value = saved; login(); }
+});
+
+// Fix Dashlane conflict - use addEventListener instead of onclick
+document.addEventListener('DOMContentLoaded', function() {
+  var lb = document.getElementById('login-btn');
+  if (lb) { lb.addEventListener('click', function(e) { e.preventDefault(); login(); }); }
+  var inp = document.getElementById('secret-inp');
+  if (inp) { inp.removeAttribute('onkeydown'); inp.addEventListener('keydown', function(e) { if(e.key==='Enter') login(); }); }
 });
 </script>
 </body>
