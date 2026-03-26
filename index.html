@@ -154,6 +154,7 @@ select.inp{cursor:pointer;background:var(--bg3)}
 #tst{position:fixed;bottom:84px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 20px;font-size:14px;white-space:nowrap;opacity:0;transition:all .25s;pointer-events:none;z-index:100;max-width:calc(100vw - 32px)}
 #tst.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 </head>
 <body>
 
@@ -228,7 +229,46 @@ select.inp{cursor:pointer;background:var(--bg3)}
 </div>
 
 <div class="screen" id="sc-scanner" style="display:none">
-  <div class="topbar"><span class="topbar-title">LeadCapture Pro</span></div>
+
+      <div id="qr-camera-wrap" style="position:relative;width:100%;max-width:460px;margin:0 auto;">
+        <video id="qr-video" playsinline muted style="width:100%;border-radius:10px;background:#000;display:block;"></video>
+        <canvas id="qr-canvas" style="display:none;"></canvas>
+        <div id="qr-aim" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+             width:55%;aspect-ratio:1/1;border:2px solid rgba(255,255,255,.75);border-radius:6px;
+             pointer-events:none;box-shadow:0 0 0 9999px rgba(0,0,0,.4);"></div>
+        <div id="qr-scan-result" style="display:none;margin-top:8px;padding:8px 12px;
+             background:#0f172a;color:#e2e8f0;border-radius:8px;font-family:monospace;
+             font-size:13px;word-break:break-all;"></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+        <button id="btn-cam-start" onclick="startQRScan()"
+          style="flex:1;padding:10px 16px;border:none;border-radius:8px;
+                 background:#4f46e5;color:#fff;font-weight:600;font-size:14px;cursor:pointer;">
+          📷 Activer caméra
+        </button>
+        <button id="btn-cam-stop" onclick="stopQRScan()"
+          style="display:none;flex:1;padding:10px 16px;border:none;border-radius:8px;
+                 background:#6b7280;color:#fff;font-weight:600;font-size:14px;cursor:pointer;">
+          ⏹ Arrêter
+        </button>
+        <button onclick="captureCard()"
+          style="flex:1;padding:10px 16px;border:none;border-radius:8px;
+                 background:#059669;color:#fff;font-weight:600;font-size:14px;cursor:pointer;">
+          🪪 Capturer carte
+        </button>
+      </div>
+      <details style="margin-top:14px;">
+        <summary style="cursor:pointer;font-size:13px;opacity:.7;">Saisie manuelle</summary>
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <input id="qr-manual" type="text" placeholder="Coller un QR code ici…"
+            style="flex:1;padding:7px 10px;border-radius:6px;border:1px solid #334155;
+                   background:#0f172a;color:#e2e8f0;font-size:13px;" />
+          <button onclick="handleQRData(document.getElementById('qr-manual').value)"
+            style="padding:7px 14px;border:none;border-radius:6px;
+                   background:#4f46e5;color:#fff;font-size:13px;cursor:pointer;">OK</button>
+        </div>
+      </details>
+      </div>
   <div class="scanner-screen">
     <div class="scanner-box">
       <span class="scanner-icon">📷</span>
@@ -558,8 +598,93 @@ const DEMO=[
   {fn:'Julie',ln:'Petit',em:'j.petit@agence.com',co:'Agence Digital',ph:'+33 6 33 44 55 66',int:'Pour clients évènementiels',tp:'warm',no:'Envoyer doc tarifaire'},
 ];
 let di=0;
-function simScan(){const c=DEMO[di%5];di++;document.getElementById('cfn').value=c.fn;document.getElementById('cln').value=c.ln;document.getElementById('cem').value=c.em;document.getElementById('cco').value=c.co;document.getElementById('cph').value=c.ph;document.getElementById('cin').value=c.int;document.getElementById('ctp').value=c.tp;document.getElementById('cno').value=c.no;toast('📷 QR scanné ! Vérifiez et sauvegardez.');openMo('mc')}
-function simNFC(){simScan();toast('📲 Badge NFC lu !')}
+
+// ── QR Scanner caméra (jsQR) ──────────────────────────────────────────────────
+async function startQRScan() {
+  const video = document.getElementById('qr-video');
+  const btnStart = document.getElementById('btn-cam-start');
+  const btnStop  = document.getElementById('btn-cam-stop');
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' } }, audio: false
+    });
+    video.srcObject = stream;
+    await video.play();
+    window._qrStream   = stream;
+    window._qrScanning = true;
+    if (btnStart) btnStart.style.display = 'none';
+    if (btnStop)  btnStop.style.display  = '';
+    requestAnimationFrame(_qrTick);
+  } catch (err) {
+    console.error('Caméra refusée :', err);
+    alert('Accès caméra impossible : ' + err.message);
+  }
+}
+
+function stopQRScan() {
+  window._qrScanning = false;
+  if (window._qrStream) {
+    window._qrStream.getTracks().forEach(t => t.stop());
+    window._qrStream = null;
+  }
+  const btnStart = document.getElementById('btn-cam-start');
+  const btnStop  = document.getElementById('btn-cam-stop');
+  if (btnStart) btnStart.style.display = '';
+  if (btnStop)  btnStop.style.display  = 'none';
+}
+
+function _qrTick() {
+  if (!window._qrScanning) return;
+  const video  = document.getElementById('qr-video');
+  const canvas = document.getElementById('qr-canvas');
+  const result = document.getElementById('qr-scan-result');
+  if (video && video.readyState === video.HAVE_ENOUGH_DATA) {
+    canvas.width  = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    if (window.jsQR) {
+      const code = window.jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
+      if (code && code.data) {
+        if (result) { result.textContent = '✅ ' + code.data; result.style.display = 'block'; }
+        stopQRScan();
+        handleQRData(code.data);
+        return;
+      }
+    }
+  }
+  requestAnimationFrame(_qrTick);
+}
+
+function handleQRData(data) {
+  if (!data) return;
+  console.log('[QR]', data);
+  if (typeof onQRScanned === 'function') onQRScanned(data);
+}
+
+async function captureCard() {
+  const video  = document.getElementById('qr-video');
+  const canvas = document.getElementById('qr-canvas');
+  if (!video || !video.srcObject) { alert('Démarrer la caméra d\'abord.'); return; }
+  canvas.width  = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.92));
+  const form = new FormData();
+  form.append('image', blob, 'card.jpg');
+  try {
+    const res  = await fetch('/api/ocr', { method: 'POST', body: form });
+    const data = await res.json();
+    console.log('[OCR]', data);
+    if (typeof onOCRResult === 'function') onOCRResult(data);
+  } catch (e) { console.error('[OCR error]', e); }
+}
+
+// Alias de compatibilité (anciens appels éventuels)
+function simScan(type) { startQRScan(); }
+function simNFC()       { alert('NFC : approcher le badge du téléphone.'); }
+// ─────────────────────────────────────────────────────────────────────────────
 function svEv(){const v=document.getElementById('einp').value.trim();if(!v)return;localStorage.setItem('lcp-ev',v);document.getElementById('pe').textContent=v;closeMo('me');toast('✅ Événement mis à jour')}
 function xprtCSV(){if(!leads.length){toast('⚠️ Aucun lead');return}const h='Prénom,Nom,Email,Entreprise,Téléphone,Score,Temp,Intérêt,Notes,Événement,Date';const rows=leads.map(l=>[l.fn,l.ln,l.email,l.company,l.phone,l.score,l.temp,l.interest,l.notes,l.event,l.at].map(v=>'"'+(v||'').replace(/"/g,'""')+'"').join(','));const blob=new Blob(['\uFEFF'+[h,...rows].join('\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='leads-'+Date.now()+'.csv';a.click();toast('📤 CSV exporté !')}
 function clrAll(){if(!confirm('Effacer TOUS les leads ?'))return;leads=[];sv();toast('🗑️ Leads effacés');rndrH();rndrL()}
