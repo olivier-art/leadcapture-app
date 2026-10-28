@@ -645,7 +645,7 @@ async function handleQRResult(data){
   scSet('QR code détecté, analyse…');
   let parsed=null;
   try{
-    const r=await fetch(API+'/api/qr',{method:'POST',headers:scHeaders(),body:JSON.stringify({qr_data:data})});
+    const r=await fetch(API+'/api/ai/qr',{method:'POST',headers:scHeaders(),body:JSON.stringify({qr_data:data})});
     if(r.ok)parsed=await r.json();
   }catch(e){}
   const ok=parsed&&(parsed.email||parsed.first_name||parsed.last_name||parsed.company);
@@ -672,7 +672,7 @@ async function captureForOCR(){
   scSet('Analyse de la carte de visite…');
   const btn=document.getElementById('btn-capture-ocr');if(btn)btn.disabled=true;
   try{
-    const res=await fetch(API+'/api/ocr',{method:'POST',headers:scHeaders(),body:JSON.stringify({image_data:dataUrl})});
+    const res=await fetch(API+'/api/ai/ocr',{method:'POST',headers:scHeaders(),body:JSON.stringify({image_data:dataUrl})});
     const data=await res.json().catch(()=>({}));
     if(!res.ok)throw new Error(data.detail||('Erreur '+res.status));
     stopCamera();
